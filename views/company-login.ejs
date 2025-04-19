@@ -149,6 +149,8 @@
         <input type="password" id="company-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
       </div>
       <button type="submit" class="btn">Sign Up</button>
+    </form>
+  </div>
       <% if (errors && errors.length > 0) { %>
     <div class="alert alert-danger">
         <ul>
@@ -159,9 +161,6 @@
     </div>
 <% } %>
 
-    </form>
-    
-  </div>
   <script>
 const tabs = document.querySelectorAll('.tab');
     const forms = document.querySelectorAll('form');
