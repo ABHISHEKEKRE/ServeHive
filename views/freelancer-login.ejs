@@ -13,6 +13,8 @@
       --bg-color: #fff;
       --transition-speed: 0.3s;
       --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --error-color: #ff5c5c;
+      --error-bg: rgba(255, 92, 92, 0.1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -107,41 +109,65 @@
       color: var(--primary-color);
       font-size: 0.9rem;
     }
-    .alert.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    padding: 15px;
-    border: 1px solid #f5c6cb;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    font-size: 1rem;
+    /* Error message styling */
+.error-message {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: var(--error-bg);
+  border-left: 4px solid var(--error-color);
+  color: var(--error-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.alert.alert-danger ul {
-    margin: 0;
-    padding-left: 20px;
+.error-icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
 }
 
-.alert.alert-danger li {
-    list-style-type: none;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-message ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.error-message ul li {
+  margin-bottom: 5px;
+}
+
+.error-message ul li:last-child {
+  margin-bottom: 0;
 }
 
   </style>
 </head>
 <body>
-  <% if (errors && errors.length > 0) { %>
-    <div class="alert alert-danger">
-        <ul>
-            <% errors.forEach(error => { %>
-                <li><%= error.msg %></li>
-            <% }) %>
-        </ul>
-    </div>
-<% } %>
+  
   <div class="auth-container">
     <div class="auth-header">
       <h1>Login / Sign Up</h1>
     </div>
+     <!-- Error message -->
+     <% if (errors && errors.length > 0) { %>
+        <div class="error-message">
+           <span class="error-icon">⚠</span>
+        <div>
+         <ul>
+           <% errors.forEach(error => { %>
+               <li><%= error.msg %></li>
+            <% }) %>
+           </ul>
+        </div>
+      </div>
+     <% } %>
     <div class="tab-container">
       <div class="tab active" data-target="freelancer-login-form">Login</div>
       <div class="tab" data-target="freelancer-signup-form">Sign Up</div>
