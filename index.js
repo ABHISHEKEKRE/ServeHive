@@ -31,11 +31,18 @@ app.use(session({
         collectionName: 'sessions',
         autoRemove: 'interval',
         autoRemoveInterval: 24 * 60
-    }),
+    },(err) => {
+    if (err) {
+        console.error('Session store error:', err);
+    } else {
+        console.log('Session store connected successfully');
+    }
+}),
     cookie: {
         maxAge: 1000 * 60 * 60 * 24,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+        sameSite: 'lax'
     }
 }));
 
