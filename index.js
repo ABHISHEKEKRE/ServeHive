@@ -23,7 +23,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.get("/about-us",(req,res)=>{
      res.render("about-us");
-}
+});
 // Session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback_secret_key',
