@@ -110,6 +110,15 @@
   </style>
 </head>
 <body>
+ <% if (errors && errors.length > 0) { %>
+    <div class="alert alert-danger">
+        <ul>
+            <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
   <div class="auth-container">
     <div class="auth-header">
       <h1>Login / Sign Up</h1>
@@ -151,15 +160,7 @@
       <button type="submit" class="btn">Sign Up</button>
     </form>
   </div>
-      <% if (errors && errors.length > 0) { %>
-    <div class="alert alert-danger">
-        <ul>
-            <% errors.forEach(error => { %>
-                <li><%= error.msg %></li>
-            <% }) %>
-        </ul>
-    </div>
-<% } %>
+     
 
   <script>
 const tabs = document.querySelectorAll('.tab');
