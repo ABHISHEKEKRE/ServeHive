@@ -50,7 +50,7 @@ exports.companySignup = [
 
             await newCompany.save();
             console.log('company saved', companyName);
-            alert("Signup successful");
+           
             res.render('company-login', { errors: [{ msg: 'Signup Successful' }] });
         } catch (error) {
             console.error(' Signup Error:', error);
@@ -77,7 +77,6 @@ exports.companyLogin = [
             const company = await Company.findOne({ email }).select('+password');
             if (!company) {
                 console.log(' Company not found!');
-                alert("Company not found. Please Sign-up");
                 return res.render('company-login', {
                     errors: [{ msg: 'Invalid email or password!' }],
                     email
@@ -88,7 +87,6 @@ exports.companyLogin = [
             console.log('🔹 Password Match:', isMatch);
 
             if (!isMatch) {
-                alert("Invalid Email or Password");
                 return res.render('company-login', {
                     errors: [{ msg: 'Invalid email or password!' }],
                     email
