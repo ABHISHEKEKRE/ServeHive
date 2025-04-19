@@ -128,6 +128,7 @@ exports.companyLogout = (req, res) => {
 
 exports.renderCompanyDashboard = (req, res) => {
     if (!req.session.companyId) {
+        console.log("WE ARE IN DASHBOARD BITCHES");
         return res.redirect('/company-login');
     }
     res.render('company-dashboard', { companyName: req.session.companyName });
