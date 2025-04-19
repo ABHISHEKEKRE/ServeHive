@@ -149,6 +149,16 @@
         <input type="password" id="company-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
       </div>
       <button type="submit" class="btn">Sign Up</button>
+      <% if (errors && errors.length > 0) { %>
+    <div class="alert alert-danger">
+        <ul>
+            <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    </div>
+<% } %>
+
     </form>
     
   </div>
