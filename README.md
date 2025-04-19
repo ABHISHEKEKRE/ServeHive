@@ -94,5 +94,5 @@ If you're interested in contributing to ServeHive, please reach out to the repos
 
 ## Contact
 
-GitHub: [ABHISHEKEKRE](https://github.com/ABHISHEKEKRE)
+GitHub: [ABHISHEKEKRE](https://github.com/ABHISHEKEKRE) [AyushGupta915](https://github.com/AyushGupta915)
 Project Link: [https://github.com/ABHISHEKEKRE/ServeHive](https://github.com/ABHISHEKEKRE/ServeHive)
