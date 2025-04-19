@@ -5,15 +5,15 @@ Welcome to ServeHive, a modern freelancing platform connecting companies with ta
 
 ## Features
 
-- **Dual User System**: Separate functionalities for companies and freelancers
+- **Dual User System**: Separate functionalities for companies and freelancers/startups
 - **User Authentication**: Secure login and signup system using MongoDB sessions
 - **Project Posting**: Companies can post detailed project requirements
-- **Bidding System**: Freelancers can bid on available projects
-- **Recommendation Engine**: Companies receive tailored freelancer recommendations
-- **Ratings & Reviews**: Transparent feedback system for both companies and freelancers
+- **Bidding System**: Freelancers/startups can bid on available projects
+- **Recommendation Engine**: Companies receive tailored freelancer/startups recommendations
+- **Ratings & Reviews**: Transparent feedback system for both companies and freelancers/startups
 
 ## Coming Soon
-- **Communication Channel**: Direct messaging between companies and freelancers
+- **Communication Channel**: Direct messaging between companies and freelancers/startups
 - **Payment Processing**: Secure payment system for project transactions
 
 ## Technology Stack
@@ -74,7 +74,7 @@ ServeHive/
 4. Select a freelancer based on recommendations and ratings
 5. Rate freelancers upon project completion
 
-### For Freelancers
+### For Freelancers/startups
 1. Sign up/Login to freelancer account
 2. Browse available projects
 3. Submit bids on interesting projects
@@ -82,7 +82,7 @@ ServeHive/
 5. Receive ratings from companies
 
 ## Current Progress
-- Successfully implemented user authentication for both freelancers and companies
+- Successfully implemented user authentication for both freelancers/startups and companies
 - Created login and signup functionality
 - Established project posting system
 - Implemented bidding mechanism
