@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Freelancer Profile - ServeHive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff5c5c;
+      --secondary-color: #ff7878;
+      --text-color: #333;
+      --bg-color: #fff;
+      --header-bg: #fff;
+      --transition-speed: 0.3s;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --nav-gap: 1rem;
+      --sidebar-width: 250px;
+    }
+    
+    /* Global Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #fafafa;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    /* Unified Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-left, .header-center, .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .header-left {
+      gap: var(--nav-gap);
+    }
+    .header-left .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .header-center {
+      display: flex;
+      gap: var(--nav-gap);
+      margin-left: 1rem;
+    }
+    .header-right {
+      display: flex;
+      gap: var(--nav-gap);
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      transition: color var(--transition-speed), border-bottom var(--transition-speed);
+    }
+    nav a:hover {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    /* Dashboard Container */
+    .dashboard-container {
+      display: flex;
+      min-height: calc(100vh - 70px);
+    }
+    /* Sidebar */
+    .dashboard-sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-color);
+      border-right: 1px solid #eee;
+      padding: 1.5rem 1rem;
+    }
+    .dashboard-sidebar ul {
+      list-style: none;
+    }
+    .dashboard-sidebar ul li {
+      margin-bottom: 1rem;
+    }
+    .dashboard-sidebar ul li a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      display: block;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background var(--transition-speed);
+    }
+    .dashboard-sidebar ul li a:hover,
+    .dashboard-sidebar ul li a.active {
+      background-color: rgba(255,92,92,0.1);
+      color: var(--primary-color);
+    }
+    /* Main Content Area */
+    .dashboard-main {
+      flex: 1;
+      padding: 2rem;
+    }
+    .page-title {
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    main section {
+      background: var(--bg-color);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    main section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+    main section p {
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="logo">ServeHive</div>
+      <nav class="header-center">
+        <a href="/freelancer-dashboard">Dashboard</a>
+        <a href="/freelancer-notifications">Notifications</a>
+      </nav>
+    </div>
+    <nav class="header-right">
+      <a href="/freelancer-help">Help & Support</a>
+      <a href="/freelancer-settings">Settings</a>
+      <a href="/freelancer-profile">Profile</a>
+      <a href="/freelancer-logout" style="padding: 0.5rem 0.75rem; background: #ff5c5c; color: white; border-radius: 4px; font-weight: bold;">Log Out</a>
+  
+    </nav>
+  </header>
+  
+  <!-- Dashboard Container -->
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar">
+      <ul>
+        <li><a href="/freelancer-bidding">Bid on Projects</a></li>
+        <li><a href="/freelancer-communications">Communications</a></li>
+        <li><a href="/freelancer-reviews">Ratings & Reviews</a></li>
+        <li><a href="/freelancer-task-management">Task Management</a></li>
+        <li><a href="/freelancer-payments">Payments & Invoices</a></li>
+      </ul>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <h1 class="page-title">Freelancer Profile</h1>
+  
+      <!-- Edit Button -->
+      <div style="text-align: right; margin-bottom: 1rem;">
+        <button id="editBtn" onclick="enableEdit()" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">Edit Profile</button>
+      </div>
+  
+      <form id="profileForm">
+        <section>
+          <h2>Basic Information</h2>
+          <p><strong>Your Name:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Email:</strong> <span class="view-mode"></span>
+            <input type="email" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Industry:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Experience:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Skills:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+        </section>
+  
+        <section>
+          <h2>Billing & Contact</h2>
+          <p><strong>Phone:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Address:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Billing Email:</strong> <span class="view-mode"></span>
+            <input type="email" class="edit-mode" value="" style="display: none;" />
+          </p>
+        </section>
+  
+        <section>
+          <h2>Preferences</h2>
+          <p><strong>Notification Preference:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Default Project Visibility:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+          <p><strong>Preferred Communication:</strong> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" value="" style="display: none;" />
+          </p>
+        </section>
+  
+        <!-- Save/Cancel Buttons -->
+        <div id="editControls" style="display: none; text-align: right; margin-top: 1rem;">
+          <button type="button" onclick="saveProfile()" style="padding: 0.5rem 1rem; background: green; color: white; border: none; border-radius: 5px; margin-right: 0.5rem;">Save</button>
+          <button type="button" onclick="cancelEdit()" style="padding: 0.5rem 1rem; background: gray; color: white; border: none; border-radius: 5px;">Cancel</button>
+        </div>
+      </form>
+    </main>
+  </div>
+  <script>
+    function enableEdit() {
+      document.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'inline-block');
+      document.getElementById('editControls').style.display = 'block';
+      document.getElementById('editBtn').style.display = 'none';
+    }
+  
+    function cancelEdit() {
+      document.querySelectorAll('.view-mode').forEach(el => el.style.display = 'inline');
+      document.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
+      document.getElementById('editControls').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'inline-block';
+    }
+  
+    function saveProfile() {
+      const viewSpans = document.querySelectorAll('.view-mode');
+      const inputs = document.querySelectorAll('.edit-mode');
+      for (let i = 0; i < inputs.length; i++) {
+        viewSpans[i].textContent = inputs[i].value;
+      }
+      cancelEdit();
+      alert("Profile updated successfully!");
+    }
+  </script>
+  <!-- FOOTER -->
+  <footer>
+    © 2025 ServeHive. All rights reserved.
+  </footer>
+</body>
+</html>

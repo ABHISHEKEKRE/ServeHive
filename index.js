@@ -1,0 +1,62 @@
+const express = require('express');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const path = require('path');
+require('dotenv').config();
+const connectDB = require('./config/db');
+const companyRoutes = require('./routes/companyRoutes');
+const freelancerRoutes = require('./routes/freelancerRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const bidRoutes = require('./routes/bidRoutes');
+
+const app = express();
+const port = process.env.PORT || 3560;
+
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'fallback_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: 'mongodb://localhost:27017/ServeHive',
+        collectionName: 'sessions',
+        autoRemove: 'interval',
+        autoRemoveInterval: 24 * 60
+    }),
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    }
+}));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Unexpected Error:', err);
+    res.status(500).send('Something went wrong! Check server logs.');
+});
+
+// Connect to MongoDB
+connectDB();
+
+// Routes
+app.use('/', companyRoutes);
+app.use('/', freelancerRoutes);
+app.use('/', projectRoutes);
+app.use('/', bidRoutes);
+
+// Start server
+app.listen(port, () => {
+    console.log(` Server Running on Port ${port}`);
+});
+
+module.exports = app;

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ServeHive</title>
+  <!-- Google Fonts for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff5c5c;
+      --secondary-color: #ff7878;
+      --text-color: #333;
+      --bg-color: #fff;
+      --header-bg: #fff;
+      --transition-speed: 0.3s;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --dropdown-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      --nav-gap: 1rem;
+    }
+    
+    /* Global Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-color);
+      background-color: #fafafa;
+      line-height: 1.6;
+    }
+    
+    /* HEADER */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    /* Left Section: Logo */
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--nav-gap);
+    }
+    .header-left .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    /* Center Navigation */
+    .header-center ul {
+      list-style: none;
+      display: flex;
+      gap: var(--nav-gap);
+      margin: 0;
+      padding: 0;
+    }
+    .header-center ul li {
+      position: relative;
+    }
+    .header-center ul li a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      transition: color var(--transition-speed), border-bottom var(--transition-speed);
+    }
+    .header-center ul li a:hover {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    /* Dropdown Content for Center Navigation */
+    .header-center ul li .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 120%;
+      left: 0;
+      background-color: var(--bg-color);
+      box-shadow: var(--dropdown-shadow);
+      padding: 0.75rem 1rem;
+      list-style: none;
+      min-width: 200px;
+      border-radius: 6px;
+      transition: opacity var(--transition-speed);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .header-center ul li .dropdown-content li {
+      margin: 0.5rem 0;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+    .header-center ul li.dropdown:hover .dropdown-content,
+    .header-center ul li.dropdown.active .dropdown-content {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    /* Right Navigation */
+    .header-right ul {
+      list-style: none;
+      display: flex;
+      gap: var(--nav-gap);
+      margin: 0;
+      padding: 0;
+    }
+    .header-right ul li {
+      position: relative;
+    }
+    .header-right ul li a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      transition: color var(--transition-speed), border-bottom var(--transition-speed);
+    }
+    .header-right ul li a:hover {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
+    /* Dropdown for Right Navigation (Login Dropdown) */
+    .header-right ul li .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 120%;
+      right: 0;
+      background-color: var(--bg-color);
+      box-shadow: var(--dropdown-shadow);
+      padding: 0.75rem 1rem;
+      list-style: none;
+      min-width: 200px;
+      border-radius: 6px;
+      transition: opacity var(--transition-speed);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .header-right ul li .dropdown-content li {
+      margin: 0.5rem 0;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+    .header-right ul li.dropdown:hover .dropdown-content,
+    .header-right ul li.dropdown.active .dropdown-content {
+      display: block;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    /* HERO SECTION */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background-color: #fafafa;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    .hero p {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+    .hero blockquote {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+    }
+    .cta-btn {
+      padding: 0.85rem 1.8rem;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background var(--transition-speed);
+    }
+    .cta-btn:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    /* CARDS SECTION */
+    .cards-section {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+    .cards-section h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.4rem;
+      color: var(--primary-color);
+    }
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background-color: var(--bg-color);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform var(--transition-speed);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h4 {
+      margin-bottom: 0.75rem;
+      color: var(--primary-color);
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      background-color: #f5f5f5;
+      margin-top: 2rem;
+    }
+    footer a {
+      color: var(--text-color);
+      text-decoration: none;
+      margin: 0 0.5rem;
+      font-weight: 500;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="logo">ServeHive</div>
+      <nav class="header-center">
+        <ul>
+          <li>
+            <a href="main-landing.ejs">Home</a>
+          </li>
+          <li class="dropdown">
+            <a href="for-companies.ejs" class="dropdown-toggle">For Companies</a>
+            <ul class="dropdown-content">
+              <li>Easy project listing & updates.</li>
+              <li>AI connects you with the best.</li>
+              <li>Secure payments</li>
+              <li>Dedicated support</li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="for-freelancers.ejs" class="dropdown-toggle">For Freelancers/Startups</a>
+            <ul class="dropdown-content">
+              <li>Browse and submit proposals.</li>
+              <li>Earn ratings & reviews.</li>
+              <li>Invoicing & secure payments</li>
+              <li>Manage tasks & deadlines.</li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="subscription.ejs" class="dropdown-toggle">Subscription</a>
+            <ul class="dropdown-content">
+              <li>Free: Basic features</li>
+              <li>Pro: Unlimited projects</li>
+              <li>Enterprise: Custom integrations</li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <nav class="header-right">
+      <ul>
+        <li><a href="about.ejs">About Us</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">Login</a>
+          <ul class="dropdown-content">
+            <li><a href="/company-login">Company</a></li>
+            <li><a href="/freelancer-login">Freelancer/Startup</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <h1>Where Businesses and Freelancers Grow Together</h1>
+    <p>ServeHive connects companies with top-tier freelance talent, streamlines collaboration, and fuels sustainable growth.</p>
+    <blockquote>“Empowering Collaboration, Fueling Innovation.”</blockquote>
+    <button class="cta-btn">Get Started for Free</button>
+  </section>
+  
+  <!-- CARDS SECTION: Our Goals & Focus -->
+  <section class="cards-section">
+    <h2>Our Goals & Focus</h2>
+    <div class="cards-container">
+      <div class="card">
+        <h4>Collaboration & Growth</h4>
+        <p>Bridging the gap between businesses and talent to foster mutual success.</p>
+      </div>
+      <div class="card">
+        <h4>Seamless Networking</h4>
+        <p>Enabling real connections for sustainable, long-term partnerships.</p>
+      </div>
+      <div class="card">
+        <h4>Reliable Support</h4>
+        <p>Providing dedicated assistance from onboarding to advanced queries.</p>
+      </div>
+      <div class="card">
+        <h4>Community Impact</h4>
+        <p>Empowering professionals and businesses to build stronger communities.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 ServeHive. All rights reserved.</p>
+    <p>
+      <a href="#">Terms of Service</a> | 
+      <a href="#">Privacy Policy</a> | 
+      <a href="#">FAQ</a>
+    </p>
+  </footer>
+  
+  <!-- JavaScript for Dropdown Toggle -->
+  <script>
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        const parentLi = this.parentElement;
+        parentLi.classList.toggle('active');
+      });
+    });
+    
+    // Close dropdowns when clicking outside the header
+    document.addEventListener('click', function(e) {
+      dropdownToggles.forEach(toggle => {
+        const parentLi = toggle.parentElement;
+        if (!parentLi.contains(e.target)) {
+          parentLi.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

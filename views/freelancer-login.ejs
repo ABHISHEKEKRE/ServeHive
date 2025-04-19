@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Freelancer Login / Sign Up - ServeHive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff5c5c;
+      --secondary-color: #ff7878;
+      --text-color: #333;
+      --bg-color: #fff;
+      --transition-speed: 0.3s;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fafafa;
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .auth-container {
+      background: var(--bg-color);
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .auth-header h1 {
+      color: var(--primary-color);
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+    .tab-container {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: border-color var(--transition-speed), color var(--transition-speed);
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    form {
+      display: none;
+    }
+    form.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(255, 92, 92, 0.3);
+    }
+    .btn:hover {
+      background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(255, 92, 92, 0.4);
+    }
+    .auth-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      text-decoration: none;
+      color: var(--primary-color);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Login / Sign Up</h1>
+    </div>
+    <div class="tab-container">
+      <div class="tab active" data-target="freelancer-login-form">Login</div>
+      <div class="tab" data-target="freelancer-signup-form">Sign Up</div>
+    </div>
+    <form id="freelancer-login-form" class="active" method="POST" action="/freelancer-login">
+      <div class="form-group">
+        <label for="freelancer-login-email">Email</label>
+        <input type="email" id="freelancer-login-email" placeholder="Enter your email" name="freelancerEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="freelancer-login-password">Password</label>
+        <input type="password" id="freelancer-login-password" placeholder="Enter your password" name="freelancerPassword"  required>
+      </div>
+      <button type="submit" class="btn">Login</button>
+      <a href="#" class="auth-link">Forgot Password?</a>
+    </form>
+    <form id="freelancer-signup-form" method="POST" action="/freelancer-signup">
+      <div class="form-group">
+        <label for="freelancer-signup-name">Full Name</label>
+        <input type="text" id="freelancer-signup-name" placeholder="Enter your full name" name="freelancerName" required>
+      </div>
+      <div class="form-group">
+        <label for="freelancer-signup-email">Email</label>
+        <input type="email" id="freelancer-signup-email" placeholder="Enter your email" name="freelancerEmail" required>
+      </div>
+      <div class="form-group">
+        <label for="freelancer-signup-password">Password</label>
+        <input type="password" id="freelancer-signup-password" placeholder="Create a password" name="freelancerPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="freelancer-signup-confirm-password">Confirm Password</label>
+        <input type="password" id="freelancer-signup-confirm-password" name="freelancerConfirmPassword" placeholder="Confirm your password" required>
+      </div>
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const forms = document.querySelectorAll('form');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        forms.forEach(form => form.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+   
+  </script>
+</body>
+</html>
