@@ -6,7 +6,7 @@ router.get('/', (req, res) => res.render('main-landing'));
 router.get('/company-login', (req, res) => res.render('company-login', { errors: [] }));
 router.post('/company-signup', companyController.companySignup);
 router.post('/company-login', companyController.companyLogin);
-router.post('/company-logout', companyController.companyLogout);
+router.get('/company-logout', companyController.companyLogout);
 router.get('/company-dashboard', companyController.renderCompanyDashboard);
 router.get('/company-profile', companyController.renderCompanyProfile);
 router.get('/company-settings', companyController.renderCompanySettings);
