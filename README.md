@@ -1,5 +1,7 @@
 # ServeHive - Freelancing Platform
 
+https://servehive.onrender.com/
+
 ## Introduction
 Welcome to ServeHive, a modern freelancing platform connecting companies with talented freelancers and startups. Our platform simplifies the process of finding the right talent for your projects or the perfect projects for your skills.
 
