@@ -16,6 +16,7 @@ const freelancerSchema = new mongoose.Schema({
         trim: true,
         match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
+    industry:{type:String},
     phone: { 
         type: Number, 
      
@@ -37,6 +38,7 @@ const freelancerSchema = new mongoose.Schema({
         type: [String], 
        
     },
+    resumelink: { type: String},
     experience: { 
         type: String, 
         maxlength: [500, 'Experience description too long']
