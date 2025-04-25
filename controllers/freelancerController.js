@@ -118,14 +118,14 @@ exports.renderFreelancerBidding = async (req, res) => {
 
 exports.renderFreelancerCommunications = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-communications');
 };
 
 exports.renderFreelancerReviews = async (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     const freelancers = await Freelancer.find({});
     res.render('freelancer-reviews', { freelancers });
@@ -133,48 +133,48 @@ exports.renderFreelancerReviews = async (req, res) => {
 
 exports.renderFreelancerTaskManagement = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-task-management');
 };
 
 exports.renderFreelancerPayments = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-payments');
 };
 
 exports.renderFreelancerNotifications = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-notifications');
 };
 
 exports.renderFreelancerHelp = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-help');
 };
 
 exports.renderFreelancerSettings = (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     res.render('freelancer-settings');
 };
 exports.renderFreelancerProfile = async (req, res) => {
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     const freelancer= await Freelancer.findOne({_id:req.session.freelancerId });
     res.render('freelancer-profile',{freelancer});
 };
 exports.renderFreelancerProfileUpdates= async(req,res)=>{
     if (!req.session.freelancerId) {
-        res.redirect('freelancer-login');
+        res.redirect('/freelancer-login');
     }
     const { freelancerName,freelancerEmail,freelancerIndustry,freelancerExperience,freelancerResumeLink,freelancerPhone,freelancerAddress }=req.body;
   
