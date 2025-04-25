@@ -13,7 +13,8 @@ const companySchema = new mongoose.Schema({
     phone: { type: String }, 
     address: { type: String }, 
     password: { type: String, required: true }, 
-    
+    industry: {type:String},
+    Founded_year: {type:Number},
     projects: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Project' 
