@@ -16,5 +16,6 @@ router.get('/company-payments', companyController.renderCompanyPayments);
 router.get('/company-task-management', companyController.renderCompanyTaskManagement);
 router.get('/company-notifications', companyController.renderCompanyNotifications);
 router.get('/company-support', companyController.renderCompanySupport);
+router.post('/company-profile-submit',companyController.renderCompanyProfileUpdates);
 
 module.exports = router;
