@@ -143,13 +143,37 @@ exports.renderCompanyDashboard = (req, res) => {
     res.render('company-dashboard', { companyName: req.session.companyName });
 };
 
-exports.renderCompanyProfile = (req, res) => {
+exports.renderCompanyProfile = async (req, res) => {
     if (!req.session.companyId) {
         return res.redirect('/company-login');
     }
-    res.render('company-profile');
+    const company=await Company.findOne({_id:req.session.companyId});
+    res.render('company-profile',{company});
 };
+// new changes for profile update
+exports.renderCompanyProfileUpdates= async (req,res)=>{
+    if(!req.session.companyId){
+        return res.redirect('/company-login');
+    }
+    const { companyName,companyEmail,companyIndustry,companyFoundedYear,companyPhone,companyAddress }=req.body;
+    
+    if (!companyName || !companyEmail) {
+    return res.status(400).send("Company name and email are required.");
+    }
 
+    const company= await Company.findOne({_id:req.session.companyId});
+    if(company){
+      company.companyName = companyName.trim();
+      company.email = companyEmail.trim().toLowerCase();
+      company.industry = companyIndustry;
+      company.Founded_year = companyFoundedYear ? Number(companyFoundedYear) : undefined;
+      company.phone = companyPhone ? String(companyPhone) : undefined;
+      company.address = companyAddress;
+
+      await company.save();
+    }
+    res.redirect('/company-profile')
+}
 exports.renderCompanySettings = (req, res) => {
     if (!req.session.companyId) {
         return res.redirect('/company-login');
