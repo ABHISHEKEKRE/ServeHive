@@ -77,6 +77,15 @@ exports.freelancerLogin = async (req, res) => {
     }
 };
 
+exports.freelancerLogout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Could not log out' });
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/');
+    });
+};
 exports.renderFreelancerDashboard = (req, res) => {
     if (!req.session.freelancerId) {
         return res.redirect('/freelancer-login');
