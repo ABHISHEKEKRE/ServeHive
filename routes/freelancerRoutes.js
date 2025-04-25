@@ -16,5 +16,6 @@ router.get('/freelancer-notifications', freelancerController.renderFreelancerNot
 router.get('/freelancer-help', freelancerController.renderFreelancerHelp);
 router.get('/freelancer-settings', freelancerController.renderFreelancerSettings);
 router.get('/freelancer-profile', freelancerController.renderFreelancerProfile);
+router.post('/freelancer-profile-submit',freelancerController.renderFreelancerProfileUpdates);
 
 module.exports = router;
