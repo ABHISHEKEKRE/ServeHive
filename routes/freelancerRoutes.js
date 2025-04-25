@@ -5,7 +5,7 @@ const freelancerController = require('../controllers/freelancerController');
 router.get('/freelancer-login', (req, res) => res.render('freelancer-login', { errors: [] }));
 router.post('/freelancer-signup', freelancerController.freelancerSignup);
 router.post('/freelancer-login', freelancerController.freelancerLogin);
-router.get('/freelancer-logout', (req, res) => res.render('main-landing'));
+router.get('/freelancer-logout', freelancerController.freelancerLogout);
 router.get('/freelancer-dashboard', freelancerController.renderFreelancerDashboard);
 router.get('/freelancer-bidding', freelancerController.renderFreelancerBidding);
 router.get('/freelancer-communications', freelancerController.renderFreelancerCommunications);
