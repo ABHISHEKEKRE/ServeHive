@@ -156,10 +156,34 @@ exports.renderFreelancerSettings = (req, res) => {
     }
     res.render('freelancer-settings');
 };
-
-exports.renderFreelancerProfile = (req, res) => {
+exports.renderFreelancerProfile = async (req, res) => {
     if (!req.session.freelancerId) {
         res.redirect('freelancer-login');
     }
-    res.render('freelancer-profile');
+    const freelancer= await Freelancer.findOne({_id:req.session.freelancerId });
+    res.render('freelancer-profile',{freelancer});
 };
+exports.renderFreelancerProfileUpdates= async(req,res)=>{
+    if (!req.session.freelancerId) {
+        res.redirect('freelancer-login');
+    }
+    const { freelancerName,freelancerEmail,freelancerIndustry,freelancerExperience,freelancerResumeLink,freelancerPhone,freelancerAddress }=req.body;
+  
+    if (!freelancerName || !freelancerEmail) {
+        return res.status(400).send("Company name and email are required.");
+        }
+    
+        const freelancer= await Freelancer.findOne({_id:req.session.freelancerId });
+        if(freelancer){
+          freelancer.name = freelancerName.trim();
+          freelancer.email = freelancerEmail.trim().toLowerCase();
+          freelancer.industry = freelancerIndustry;
+          freelancer.experience = freelancerExperience;
+          freelancer.resumelink = freelancerResumeLink;
+          freelancer.phone = freelancerPhone ? String(freelancerPhone) : undefined;
+          freelancer.address = freelancerAddress;
+    
+          await freelancer.save();
+        }
+    res.redirect('/freelancer-profile');
+}
