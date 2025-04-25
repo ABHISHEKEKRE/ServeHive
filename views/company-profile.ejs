@@ -194,34 +194,32 @@
         <button id="editBtn" onclick="enableEdit()" style="padding: 0.5rem 1rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; cursor: pointer;">Edit Profile</button>
       </div>
 
-      <form id="profileForm">
+      <form id="profileForm" method="POST" action="/company-profile-submit">
         <section>
           <h2>Basic Information</h2>
-          <p><strong>Company Name:</strong> <span class="view-mode"></span>
-            <input type="text" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Company Name: </strong><%= company.companyName %>  <span class="view-mode"></span>
+            <input type="text" class="edit-mode" id="company-name" name="companyName" value="<%= company.companyName %>" style="display: none;" />
           </p>
-          <p><strong>Email:</strong> <span class="view-mode"></span>
-            <input type="email" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Email: </strong><%= company.email %> <span class="view-mode"></span>
+            <input type="email" class="edit-mode" id="company-email" name="companyEmail" value="<%= company.email %>" style="display: none;" />
           </p>
-          <p><strong>Industry:</strong> <span class="view-mode"></span>
-            <input type="text" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Industry: </strong><%= company.industry %> <span class="view-mode"></span>
+            <input type="text" class="edit-mode"  id="company-industry" name="companyIndustry" value="<%= company.industry %>" style="display: none;" />
           </p>
-          <p><strong>Founded:</strong> <span class="view-mode"></span>
-            <input type="text" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Founded:</strong>   <%= company.Founded_year %><span class="view-mode"></span>
+            <input type="text" class="edit-mode" id="company-founded_year" name="companyFoundedYear" value="<%= company.Founded_year %>" style="display: none;" />
           </p>
         </section>
 
         <section>
           <h2>Billing & Contact</h2>
-          <p><strong>Phone:</strong> <span class="view-mode"></span>
-            <input type="text" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Phone:</strong><%= company.phone %> <span class="view-mode"></span>
+            <input type="text" class="edit-mode" id="company-phone" name="companyPhone" value="<%= company.phone %>" style="display: none;" />
           </p>
-          <p><strong>Address:</strong> <span class="view-mode"></span>
-            <input type="text" class="edit-mode" value="" style="display: none;" />
+          <p><strong>Address:</strong><%= company.address %>   <span class="view-mode"></span>
+            <input type="text" class="edit-mode" id="company-address" name="companyAddress" value="<%= company.address %>" style="display: none;" />
           </p>
-          <p><strong>Billing Email:</strong> <span class="view-mode"></span>
-            <input type="email" class="edit-mode" value="" style="display: none;" />
-          </p>
+
         </section>
 
         <section>
@@ -239,36 +237,28 @@
 
         <!-- Save/Cancel Buttons -->
         <div id="editControls" style="display: none; text-align: right; margin-top: 1rem;">
-          <button type="button" onclick="saveProfile()" style="padding: 0.5rem 1rem; background: green; color: white; border: none; border-radius: 5px; margin-right: 0.5rem;">Save</button>
+          <button type="submit"  style="padding: 0.5rem 1rem; background: green; color: white; border: none; border-radius: 5px; margin-right: 0.5rem;">Save</button>
           <button type="button" onclick="cancelEdit()" style="padding: 0.5rem 1rem; background: gray; color: white; border: none; border-radius: 5px;">Cancel</button>
         </div>
       </form>
     </main>
   </div>
   <script>
-    function enableEdit() {
-      document.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'inline-block');
-      document.getElementById('editControls').style.display = 'block';
-      document.getElementById('editBtn').style.display = 'none';
-    }
+   function enableEdit() {
+    const editFields = document.querySelectorAll('.edit-mode');
+    const viewFields = document.querySelectorAll('.view-mode');
+    const editControls = document.getElementById('editControls');
+    const editBtn = document.getElementById('editBtn');
 
-    function cancelEdit() {
-      document.querySelectorAll('.view-mode').forEach(el => el.style.display = 'inline');
-      document.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
-      document.getElementById('editControls').style.display = 'none';
-      document.getElementById('editBtn').style.display = 'inline-block';
-    }
+    editFields.forEach(el => el.style.display = 'inline-block');
+    viewFields.forEach(el => el.style.display = 'none');
+    editControls.style.display = 'block';
+    editBtn.style.display = 'none';
+  }
 
-    function saveProfile() {
-      const viewSpans = document.querySelectorAll('.view-mode');
-      const inputs = document.querySelectorAll('.edit-mode');
-      for (let i = 0; i < inputs.length; i++) {
-        viewSpans[i].textContent = inputs[i].value;
-      }
-      cancelEdit();
-      alert("Profile updated successfully!");
-    }
+  function cancelEdit() {
+    window.location.reload(); // simple way to reset view without saving
+  }
   </script>
   <!-- FOOTER -->
   <footer>
