@@ -2,224 +2,287 @@ const { body, validationResult } = require('express-validator');
 const Company = require('../models/companySchema');
 const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
-const Freelancer=require('../models/FreelancerSchema')
-const signupValidation = [
-    body('companyName')
-        .trim()
-        .isLength({ min: 2, max: 50 }).withMessage('Company name must be 2-50 characters long')
-        .matches(/^[a-zA-Z0-9 &-]+$/).withMessage('Company name can only contain letters, numbers, spaces, &, and -'),
-    body('email')
-        .trim()
-        .isEmail().withMessage('Invalid email address')
-        .normalizeEmail(),
-    body('password')
-        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-        .withMessage('Password must include uppercase, lowercase, number, and special character'),
-    body('phone')
-        .optional({ checkFalsy: true })
-        .isMobilePhone().withMessage('Invalid phone number')
-];
+const Freelancer=require('../models/FreelancerSchema');
+const jwt = require('jsonwebtoken');
 
-const loginValidation = [
-    body('email').trim().isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('password').not().isEmpty().withMessage('Password is required')
-];
+const JWT_SECRET = process.env.JWT_SECRET;
 
-exports.companySignup = [
-    ...signupValidation,
-    async (req, res) => {
-        try {
-            console.log('signup page post');
-            const { companyName, description, email, phone, address, password } = req.body;
+exports.renderCompanyDashboard = async (req, res) => {
+    try {
+        const token = req.cookies.jwt;
 
-            const existingCompany = await Company.findOne({ email });
-            if (existingCompany) {
-                console.log('Company already exists');
-                return res.render('company-login', { errors: [{ msg: 'Company with this email already exists!' }] });
-            }
-
-            const newCompany = new Company({
-                companyName,
-                description: description || '',
-                email,
-                phone: phone || '',
-                address: address || '',
-                password
-            });
-
-            await newCompany.save();
-            console.log('company saved', companyName);
-           
-            res.render('company-login', { errors: [{ msg: 'Signup Successful' }] });
-        } catch (error) {
-            console.error(' Signup Error:', error);
-            res.render('company-login', { errors: [{ msg: 'Server error during signup' }] });
-        }
-    }
-];
-
-exports.companyLogin = [
-    ...loginValidation,
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.render('company-login', {
-                errors: errors.array(),
-                email: req.body.email
-            });
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
         }
 
-        try {
-            const { email, password } = req.body;
-            console.log('🔹 Login attempt for:', email);
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
 
-            const company = await Company.findOne({ email }).select('+password');
-            if (!company) {
-                console.log(' Company not found!');
-                return res.render('company-login', {
-                    errors: [{ msg: 'Invalid email or password!' }],
-                    email
-                });
-            }
+        const company = await Company.findById(companyId);
 
-            const isMatch = await company.validatePassword(password);
-            console.log('🔹 Password Match:', isMatch);
-
-            if (!isMatch) {
-                return res.render('company-login', {
-                    errors: [{ msg: 'Invalid email or password!' }],
-                    email
-                });
-            }
-
-            req.session.companyId = company._id;
-            req.session.companyName = company.companyName;
-
-            req.session.save((err) => {
-                if (err) {
-                    console.error('Session save error:', err);
-                    return res.render('company-login', {
-                        errors: [{ msg: 'Session error. Please try again.' }],
-                        email
-                    });
-                }
-                console.log(' Login successful for:', company.companyName);
-                res.redirect('/company-dashboard');
-            });
-        } catch (error) {
-            console.error(' Login Error:', error.message, error.stack);
-            res.render('company-login', {
-                errors: [{ msg: 'Server error during login' }],
-                email
-            });
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
         }
-    }
-];
 
-exports.companyLogout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ message: 'Could not log out' });
-        }
-        res.clearCookie('connect.sid');
-        res.redirect('/');
-    });
-};
-
-// exports.renderCompanyDashboard = (req, res) => {
-//     if (!req.session.companyId) {
-//         console.log("WE ARE IN DASHBOARD BITCHES");
-//         return res.redirect('/company-login');
-//     }
-//     res.render('company-dashboard', { companyName: req.session.companyName });
-// };
-exports.renderCompanyDashboard = (req, res) => {
-    console.log('Session in dashboard:', req.session);
-    if (!req.session.companyId) {
-        console.log("WE ARE IN DASHBOARD BITCHES - No session found");
+        res.render('company-dashboard', { companyName: company.companyName });
+    } catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    res.render('company-dashboard', { companyName: req.session.companyName });
 };
 
 exports.renderCompanyProfile = async (req, res) => {
-    if (!req.session.companyId) {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        res.render('company-profile',{company});
+
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    const company=await Company.findOne({_id:req.session.companyId});
-    res.render('company-profile',{company});
+    
 };
 // new changes for profile update
 exports.renderCompanyProfileUpdates= async (req,res)=>{
-    if(!req.session.companyId){
-        return res.redirect('/company-login');
-    }
-    const { companyName,companyEmail,companyIndustry,companyFoundedYear,companyPhone,companyAddress }=req.body;
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        const { companyName,companyEmail,companyIndustry,companyFoundedYear,companyPhone,companyAddress }=req.body;
     
-    if (!companyName || !companyEmail) {
-    return res.status(400).send("Company name and email are required.");
+        if (!companyName || !companyEmail) {
+           return res.status(400).send("Company name and email are required.");
+        }
+
+        if(company){
+             company.companyName = companyName.trim();
+             company.email = companyEmail.trim().toLowerCase();
+             company.industry = companyIndustry;
+             company.Founded_year = companyFoundedYear ? Number(companyFoundedYear) : undefined;
+             company.phone = companyPhone ? String(companyPhone) : undefined;
+             company.address = companyAddress;
+
+              await company.save();
+            }
+            res.redirect('/company-profile')
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/company-login');
     }
 
-    const company= await Company.findOne({_id:req.session.companyId});
-    if(company){
-      company.companyName = companyName.trim();
-      company.email = companyEmail.trim().toLowerCase();
-      company.industry = companyIndustry;
-      company.Founded_year = companyFoundedYear ? Number(companyFoundedYear) : undefined;
-      company.phone = companyPhone ? String(companyPhone) : undefined;
-      company.address = companyAddress;
-
-      await company.save();
-    }
-    res.redirect('/company-profile')
 }
-exports.renderCompanySettings = (req, res) => {
-    if (!req.session.companyId) {
-        return res.redirect('/company-login');
-    }
-    res.render('company-settings');
-};
+exports.renderCompanySettings = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
 
-exports.renderCompanyCommunications = (req, res) => {
-    if (!req.session.companyId) {
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        res.render('company-settings');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    res.render('company-communications');
+
+   
+};
+exports.renderCompanyCommunications = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+         res.render('company-communications');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/company-login');
+    }
 };
 
 exports.renderCompanyReviews = async (req, res) => {
-    if (!req.session.companyId) {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        const companies = await Company.find({});
+        res.render('company-reviews', { companies });
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    const companies = await Company.find({});
-    res.render('company-reviews', { companies });
+    
+exports.renderCompanyPayments = async(req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        res.render('company-payments');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/company-login');
+    }
+   
+};
+exports.renderCompanyTaskManagement = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        res.render('company-task-management');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/company-login');
+    }
+  
 };
 
-exports.renderCompanyPayments = (req, res) => {
-    if (!req.session.companyId) {
-        return res.redirect('/company-login');
-    }
-    res.render('company-payments');
-};
+exports.renderCompanyNotifications =async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
 
-exports.renderCompanyTaskManagement = (req, res) => {
-    if (!req.session.companyId) {
-        return res.redirect('/company-login');
-    }
-    res.render('company-task-management');
-};
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
 
-exports.renderCompanyNotifications = (req, res) => {
-    if (!req.session.companyId) {
-        return res.redirect('/company-login');
-    }
-    res.render('company-notifications');
-};
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
 
-exports.renderCompanySupport = (req, res) => {
-    if (!req.session.companyId) {
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+        res.render('company-notifications');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    res.render('company-support');
+    
+};
+exports.renderCompanySupport = async(req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/company-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const companyId = decoded.id; 
+
+        const company = await Company.findById(companyId);
+
+        if (!company) {
+            console.log('Company not found');
+            return res.redirect('/company-login');
+        }
+         res.render('company-support');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/company-login');
+    }
 };
