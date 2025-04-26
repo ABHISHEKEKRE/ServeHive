@@ -1,7 +1,9 @@
 const Company = require('../models/companySchema');
 const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
-const Freelancer=require('../models/FreelancerSchema')
+const Freelancer=require('../models/FreelancerSchema');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
 exports.placeBid = async (req, res) => {
     const projectId = req.query.project;
     console.log(projectId);
@@ -10,12 +12,30 @@ exports.placeBid = async (req, res) => {
     if (!project) {
         return res.status(404).send('Project not found');
     }
-    const freelancer = req.session.freelancerId;
-    if (!freelancer) {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        
+       res.render('bid', { project, freelancer });
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/freelancer-login');
     }
-
-    res.render('bid', { project, freelancer });
 };
 
 exports.submitBid = async (req, res) => {
@@ -28,12 +48,13 @@ exports.submitBid = async (req, res) => {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
+        console.log("FREELANCER ID:" ,freelancerId);
         const project = await Project.findById(projectId);
         const freelancer = await Freelancer.findById(freelancerId);
-
+        console.log(freelancer);
         if (!project || !freelancer) {
             return res.status(404).json({ error: 'Project or Freelancer not found' });
-        }
+        } 
 
         const newBid = new Bid({
             project: projectId,
