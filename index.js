@@ -8,11 +8,18 @@ const companyRoutes = require('./routes/companyRoutes');
 const freelancerRoutes = require('./routes/freelancerRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const bidRoutes = require('./routes/bidRoutes');
+const messageRoutes= require('./routes/messageRoutes');
+const authRoutes=require('./routes/authRoutes');
 
 const app = express();
 const port = process.env.PORT || 3560;
+const cookieParser = require('cookie-parser');
+
+
+
 
 // Middleware
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -63,6 +70,8 @@ app.use('/', companyRoutes);
 app.use('/', freelancerRoutes);
 app.use('/', projectRoutes);
 app.use('/', bidRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/messages',messageRoutes);
 
 // Start server
 app.listen(port, () => {
