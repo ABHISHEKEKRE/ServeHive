@@ -181,7 +181,7 @@ exports.renderCompanyReviews = async (req, res) => {
         console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-    
+}   
 exports.renderCompanyPayments = async(req, res) => {
     try{
         const token = req.cookies.jwt;
