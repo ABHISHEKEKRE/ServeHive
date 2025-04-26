@@ -183,11 +183,11 @@ nav a:hover {
   <footer>
     © 2025 ServeHive. All rights reserved.
   </footer>
-    <script>
+   <script>
     let selectedFreelancer = null;
     let selectedEmail = null;
 
-    function viewProfile(name, description, email, industry, experience, resumeLink) {
+    function viewProfile(name, email, industry, experience, resumeLink) {
       document.querySelector('.card-grid').style.display = 'none';
       document.getElementById('profile-name').textContent = name;
       document.getElementById('profile-email').textContent = email;
@@ -200,39 +200,27 @@ nav a:hover {
       selectedFreelancer = name;
       selectedEmail = email;
     }
+
     function selectFreelancer() {
-  if (selectedFreelancer && selectedEmail) {
-    const confirmationMessage = document.getElementById('confirmation-message');
-    confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
-    confirmationMessage.style.display = 'block';
+      if (selectedFreelancer && selectedEmail) {
+        const confirmationMessage = document.getElementById('confirmation-message');
+        confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
+        confirmationMessage.style.display = 'block';
 
-    sendEmailSimulation(selectedEmail, selectedFreelancer);
-  }
-}
-
-    function selectFreelancer(name, email) {
-  if (name && email) {
-    const confirmationMessage = document.getElementById('confirmation-message');
-    confirmationMessage.textContent = `${name} has been selected for your project!`;
-    confirmationMessage.style.display = 'block';
-
-    sendEmailSimulation(email, name);
-  }
-}
+        sendEmailSimulation(selectedEmail, selectedFreelancer);
+      }
+    }
 
     function sendEmailSimulation(email, freelancerName) {
-      // This is a simulation; in a real application, replace with an API call to a backend
-      alert(`Email sent to ${email} with the message:\n\nHello ${freelancerName},\nYou have been selected for a project on ServeHive. Please contact the company to proceed.\n\nBest,\nServeHive Team`);
-      console.log(`Simulated email sent to ${email} for ${freelancerName}`);
+      console.log(`Simulating email to ${email}: Congratulations ${freelancerName}, you have been selected!`);
+      // You can later replace this with a real email API call
     }
 
     function closeProfile() {
-      document.querySelector('.card-grid').style.display = 'grid';
       document.getElementById('profile-details').style.display = 'none';
-      document.getElementById('confirmation-message').style.display = 'none';
-      selectedFreelancer = null;
-      selectedEmail = null;
+      document.querySelector('.card-grid').style.display = 'grid';
     }
-  </script>
+</script>
+
 </body>
 </html>
