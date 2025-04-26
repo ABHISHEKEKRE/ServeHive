@@ -2,7 +2,7 @@ const Company = require('../models/companySchema');
 const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
 const Freelancer=require('../models/FreelancerSchema')
-exports.postProject = async (req, res) => {
+exports.postProject = async (req, res) => { 
     try {
         if (!req.session.companyId) {
             return res.status(401).json({ message: 'Unauthorized. Please log in.' });
