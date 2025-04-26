@@ -108,7 +108,7 @@ nav a:hover {
       margin-bottom: 1rem;
       color: #555;
     }
-    .card button {
+    .card button, .profile-details button {
       padding: 0.5rem 1rem;
       background: var(--primary-color);
       color: #fff;
@@ -117,10 +117,63 @@ nav a:hover {
       cursor: pointer;
       transition: background var(--transition-speed);
       font-size: 0.9rem;
+      margin-right: 0.5rem;
     }
-    .card button:hover { background: var(--secondary-color); }
-    footer { text-align: center; padding: 1rem; background: #f5f5f5; margin-top: 2rem; }
-  </style>
+    .card button:hover, .profile-details button:hover {
+      background: var(--secondary-color);
+    }
+    .profile-details {
+      display: none;
+      margin-top: 1rem;
+      background: var(--bg-color);
+      padding: 1.5rem;
+     border-radius: 8px;
+    box-shadow: var(--shadow);
+      transition: all var(--transition-speed);
+    }
+    .profile-details h2 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    .profile-details .info-item {
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
+    }
+    .profile-details .info-item label {
+      font-weight: 600;
+      margin-right: 0.5rem;
+       color: var(--primary-color);
+    }
+    .profile-details .info-item a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    .profile-details .info-item a:hover {
+      text-decoration: underline;
+    }
+    .confirmation-message {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background: rgba(255, 92, 92, 0.1);
+      border-radius: 8px;
+      color: var(--primary-color);
+      font-weight: 600;
+      text-align: center;
+     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+     transition: all var(--transition-speed);
+    }
+    footer { text-align: center; 
+      padding: 1rem; 
+      background: #f5f5f5; 
+      margin-top: 2rem; }
+      .hidden {
+         opacity: 0;
+         display: none;
+           transition: opacity var(--transition-speed);
+}
+    </style>
 </head>
 <body>
   <header>
@@ -167,7 +220,7 @@ nav a:hover {
         <% } else { %>
           <p>No freelancers have bid on your projects yet.</p>
         <% } %>
-          <div id="profile-details" class="profile-details">
+        <div id="profile-details" class="profile-details">
           <div class="info-item"><label>Name:</label><span id="profile-name"></span></div>
           <div class="info-item"><label>Email:</label><span id="profile-email"></span></div>
           <div class="info-item"><label>Industry:</label><span id="profile-industry"></span></div>
@@ -183,11 +236,17 @@ nav a:hover {
   <footer>
     © 2025 ServeHive. All rights reserved.
   </footer>
-   <script>
+  <script>
     let selectedFreelancer = null;
     let selectedEmail = null;
 
-    function viewProfile(name, email, industry, experience, resumeLink) {
+    function viewProfile(name, description, email, industry, experience, resumeLink) {
+      const cardGrid = document.querySelector('.card-grid');
+      cardGrid.style.opacity = '0';
+      
+      
+     setTimeout(() => {
+    cardGrid.style.display = 'none';
       document.querySelector('.card-grid').style.display = 'none';
       document.getElementById('profile-name').textContent = name;
       document.getElementById('profile-email').textContent = email;
@@ -199,28 +258,77 @@ nav a:hover {
       document.getElementById('confirmation-message').style.display = 'none';
       selectedFreelancer = name;
       selectedEmail = email;
-    }
-
+      const profileDetails = document.getElementById('profile-details');
+    profileDetails.style.display = 'block';
+    setTimeout(() => {
+      profileDetails.style.opacity = '1';
+        }, 50);
+    
+    document.getElementById('confirmation-message').style.display = 'none';
+    selectedFreelancer = name;
+    selectedEmail = email;
+  }, 300);
+}
+  
     function selectFreelancer() {
-      if (selectedFreelancer && selectedEmail) {
-        const confirmationMessage = document.getElementById('confirmation-message');
-        confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
-        confirmationMessage.style.display = 'block';
+  if (selectedFreelancer && selectedEmail) {
+    const confirmationMessage = document.getElementById('confirmation-message');
+    confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
+    confirmationMessage.style.display = 'block';
+    confirmationMessage.style.opacity = '0';
+    setTimeout(() => {
+      confirmationMessage.style.opacity = '1';
+    }, 50);
 
-        sendEmailSimulation(selectedEmail, selectedFreelancer);
-      }
-    }
+    sendEmailSimulation(selectedEmail, selectedFreelancer);
+  }
+}
+
+
+    function selectFreelancer(name, email) {
+  if (name && email) {
+    const confirmationMessage = document.getElementById('confirmation-message');
+    confirmationMessage.textContent = `${name} has been selected for your project!`;
+    confirmationMessage.style.display = 'block';
+
+    sendEmailSimulation(email, name);
+  }
+}
 
     function sendEmailSimulation(email, freelancerName) {
-      console.log(`Simulating email to ${email}: Congratulations ${freelancerName}, you have been selected!`);
-      // You can later replace this with a real email API call
+      // This is a simulation; in a real application, replace with an API call to a backend
+      alert(`Email sent to ${email} with the message:\n\nHello ${freelancerName},\nYou have been selected for a project on ServeHive. Please contact the company to proceed.\n\nBest,\nServeHive Team`);
+      console.log(`Simulated email sent to ${email} for ${freelancerName}`);
     }
 
+    // function closeProfile() {
+    //   document.querySelector('.card-grid').style.display = 'grid';
+    //   document.getElementById('profile-details').style.display = 'none';
+    //   document.getElementById('confirmation-message').style.display = 'none';
+    //   selectedFreelancer = null;
+    //   selectedEmail = null;
+    // }
     function closeProfile() {
-      document.getElementById('profile-details').style.display = 'none';
-      document.querySelector('.card-grid').style.display = 'grid';
-    }
-</script>
+  // Fade out profile details
+  const profileDetails = document.getElementById('profile-details');
+  profileDetails.style.opacity = '0';
+  
+  setTimeout(() => {
+    profileDetails.style.display = 'none';
+    document.getElementById('confirmation-message').style.display = 'none';
+    
+    // Show card grid
+    const cardGrid = document.querySelector('.card-grid');
+    cardGrid.style.display = 'grid';
+    setTimeout(() => {
+      cardGrid.style.opacity = '1';
+    }, 50);
+    
+    selectedFreelancer = null;
+    selectedEmail = null;
+  }, 300);
+}
 
+  </script>
 </body>
 </html>
