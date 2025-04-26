@@ -1,198 +1,336 @@
 const Company = require('../models/companySchema');
 const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
-const Freelancer=require('../models/FreelancerSchema')
-exports.freelancerSignup = async (req, res) => {
-    try {
-        console.log('signup page post');
-        const { freelancerName, freelancerEmail, freelancerPassword } = req.body;
-        const email = freelancerEmail;
+const Freelancer=require('../models/FreelancerSchema');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
 
-        const existingFreelancer = await Freelancer.findOne({ email });
-        if (existingFreelancer) {
-            console.log('Freelancer already exists');
-            return res.render('freelancer-login', { errors: [{ msg: 'Freelancer/Startup with this email already exists!' }] });
-        }
 
-        const newFreelancer = new Freelancer({
-            name: freelancerName,
-            email: freelancerEmail,
-            password: freelancerPassword
-        });
 
-        await newFreelancer.save();
-        console.log('Freelancer saved', freelancerName);
-        res.render('freelancer-login', { errors: [{ msg: 'Signup Successful' }] });
-    } catch (error) {
-        console.error('Signup Error:', error);
-        res.render('freelancer-login', { errors: [{ msg: 'Server error during signup' }] });
-    }
-};
-
-exports.freelancerLogin = async (req, res) => {
-    try {
-        const { freelancerEmail, freelancerPassword } = req.body;
-        const email = freelancerEmail;
-        const password = freelancerPassword;
-
-        const freelancer = await Freelancer.findOne({ email }).select('+password');
-        if (!freelancer) {
-            console.log('Freelancer not found!');
-            return res.render('freelancer-login', {
-                errors: [{ msg: 'Invalid email or password!' }],
-                email
-            });
-        }
-
-        const isMatch = await freelancer.validatePassword(password);
-        console.log('🔹 Password Match:', isMatch);
-
-        if (!isMatch) {
-            return res.render('freelancer-login', {
-                errors: [{ msg: 'Invalid email or password!' }],
-                email
-            });
-        }
-
-        req.session.freelancerId = freelancer._id;
-        req.session.freelancerName = freelancer.name;
-
-        req.session.save((err) => {
-            if (err) {
-                console.error('Session save error:', err);
-                return res.render('freelancer-login', {
-                    errors: [{ msg: 'Session error. Please try again.' }],
-                    email
-                });
+exports.renderFreelancerDashboard = async(req, res) => {
+      try{
+            const token = req.cookies.jwt;
+    
+            if (!token) {
+                console.log('No token found');
+                return res.redirect('/freelancer-login');
             }
-            console.log('Login successful for:', freelancer.email);
-            res.redirect('/freelancer-dashboard');
-        });
-    } catch (error) {
-        console.error('freelancer login post error', error);
-        res.render('freelancer-login', {
-            errors: [{ msg: 'Server error during login' }],
-            email: req.body.freelancerEmail
-        });
-    }
-};
-
-exports.freelancerLogout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({ message: 'Could not log out' });
+    
+            const decoded = jwt.verify(token, JWT_SECRET); 
+            const freelancerId = decoded.id; 
+    
+            const freelancer = await Freelancer.findById(freelancerId);
+    
+            if (!freelancer) {
+                console.log('Freelancer not found');
+                return res.redirect('/freelancer-login');
+            }
+            
+             res.render('freelancer-dashboard', { freelancerName: freelancer.name });
         }
-        res.clearCookie('connect.sid');
-        res.redirect('/');
-    });
-};
-exports.renderFreelancerDashboard = (req, res) => {
-    if (!req.session.freelancerId) {
-        return res.redirect('/freelancer-login');
-    }
-    console.log(req.session.freelancerName);
-    res.render('freelancer-dashboard', { freelancerName: req.session.freelancerName });
+        catch (error) {
+            console.error('Error verifying JWT or rendering dashboard:', error.message);
+            return res.redirect('/freelancer-login');
+        }
 };
 
 exports.renderFreelancerBidding = async (req, res) => {
-    try {
-        if (!req.session.freelancerId) {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
             return res.redirect('/freelancer-login');
         }
 
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        try{
         const openProjects = await Project.find({ status: 'Open' }).populate('company');
 
         res.render('freelancer-bidding', {
-            freelancerName: req.session.freelancerName,
+            freelancerName: freelancer.name,
             projects: openProjects
         });
-    } catch (error) {
-        console.error('Error fetching projects:', error);
-        res.render('freelancer-bidding', {
-            freelancerName: req.session.freelancerName,
-            projects: [],
-            error: 'Failed to load projects.'
-        });
+          }
+          catch (error) {
+            console.error('Error fetching projects:', error);
+            res.render('freelancer-bidding', {
+                freelancerName: freelancer.name,
+                projects: [],
+                error: 'Failed to load projects.'
+            });
+        }
+
+          
     }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+ 
 };
 
-exports.renderFreelancerCommunications = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+exports.renderFreelancerCommunications = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        
+        res.render('freelancer-communications');
     }
-    res.render('freelancer-communications');
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+    
 };
 
 exports.renderFreelancerReviews = async (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        
+            const freelancers = await Freelancer.find({});
+            res.render('freelancer-reviews', { freelancers });
     }
-    const freelancers = await Freelancer.find({});
-    res.render('freelancer-reviews', { freelancers });
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+    
 };
 
-exports.renderFreelancerTaskManagement = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+exports.renderFreelancerTaskManagement = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        
+          res.render('freelancer-task-management');
     }
-    res.render('freelancer-task-management');
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
 };
 
-exports.renderFreelancerPayments = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+
+exports.renderFreelancerPayments = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+           res.render('freelancer-payments');
     }
-    res.render('freelancer-payments');
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
 };
 
-exports.renderFreelancerNotifications = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+exports.renderFreelancerNotifications = async(req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+           res.render('freelancer-notifications');
     }
-    res.render('freelancer-notifications');
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
 };
 
-exports.renderFreelancerHelp = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
-    }
-    res.render('freelancer-help');
-};
 
-exports.renderFreelancerSettings = (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+exports.renderFreelancerHelp = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        res.render('freelancer-help');
     }
-    res.render('freelancer-settings');
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+    
+};
+exports.renderFreelancerSettings = async (req, res) => {
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+              res.render('freelancer-settings');
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
 };
 exports.renderFreelancerProfile = async (req, res) => {
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        res.render('freelancer-profile',{freelancer});
     }
-    const freelancer= await Freelancer.findOne({_id:req.session.freelancerId });
-    res.render('freelancer-profile',{freelancer});
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
 };
 exports.renderFreelancerProfileUpdates= async(req,res)=>{
-    if (!req.session.freelancerId) {
-        res.redirect('/freelancer-login');
-    }
-    const { freelancerName,freelancerEmail,freelancerIndustry,freelancerExperience,freelancerResumeLink,freelancerPhone,freelancerAddress }=req.body;
+    try{
+        const token = req.cookies.jwt;
+
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
+
+        const freelancer = await Freelancer.findById(freelancerId);
+
+        if (!freelancer) {
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
+        }
+        const { freelancerName,freelancerEmail,freelancerIndustry,freelancerExperience,freelancerResumeLink,freelancerPhone,freelancerAddress }=req.body;
   
-    if (!freelancerName || !freelancerEmail) {
-        return res.status(400).send("Company name and email are required.");
-        }
-    
-        const freelancer= await Freelancer.findOne({_id:req.session.freelancerId });
-        if(freelancer){
-          freelancer.name = freelancerName.trim();
-          freelancer.email = freelancerEmail.trim().toLowerCase();
-          freelancer.industry = freelancerIndustry;
-          freelancer.experience = freelancerExperience;
-          freelancer.resumelink = freelancerResumeLink;
-          freelancer.phone = freelancerPhone ? String(freelancerPhone) : undefined;
-          freelancer.address = freelancerAddress;
-    
-          await freelancer.save();
-        }
-    res.redirect('/freelancer-profile');
+        if (!freelancerName || !freelancerEmail) {
+            return res.status(400).send("Company name and email are required.");
+            }
+            if(freelancer){
+              freelancer.name = freelancerName.trim();
+              freelancer.email = freelancerEmail.trim().toLowerCase();
+              freelancer.industry = freelancerIndustry;
+              freelancer.experience = freelancerExperience;
+              freelancer.resumelink = freelancerResumeLink;
+              freelancer.phone = freelancerPhone ? String(freelancerPhone) : undefined;
+              freelancer.address = freelancerAddress;
+        
+              await freelancer.save();
+            }
+        res.render('freelancer-profile',{freelancer});
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+   
 }
