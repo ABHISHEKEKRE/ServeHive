@@ -75,7 +75,7 @@
     </div>
     <form action="/submit-bid" method="POST">
         <input type="hidden" name="projectId" value="<%= project._id %>">
-        <input type="hidden" name="freelancerId" value="<%= freelancer %>"> 
+        <input type="hidden" name="freelancerId" value="<%= freelancer._id %>"> 
       
         <label for="bidAmount">Your Bid Amount ($):</label>
         <input type="number" id="bidAmount" name="bidAmount" required>
