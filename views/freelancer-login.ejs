@@ -172,7 +172,7 @@
       <div class="tab active" data-target="freelancer-login-form">Login</div>
       <div class="tab" data-target="freelancer-signup-form">Sign Up</div>
     </div>
-    <form id="freelancer-login-form" class="active" method="POST" action="/freelancer-login">
+    <form id="freelancer-login-form" class="active" method="POST" action="/api/auth/freelancer-login">
       <div class="form-group">
         <label for="freelancer-login-email">Email</label>
         <input type="email" id="freelancer-login-email" placeholder="Enter your email" name="freelancerEmail" required>
@@ -184,7 +184,7 @@
       <button type="submit" class="btn">Login</button>
       <a href="#" class="auth-link">Forgot Password?</a>
     </form>
-    <form id="freelancer-signup-form" method="POST" action="/freelancer-signup">
+    <form id="freelancer-signup-form" method="POST" action="/api/auth/freelancer-signup">
       <div class="form-group">
         <label for="freelancer-signup-name">Full Name</label>
         <input type="text" id="freelancer-signup-name" placeholder="Enter your full name" name="freelancerName" required>
