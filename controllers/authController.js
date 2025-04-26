@@ -107,34 +107,6 @@ async (req, res) => {
     }
 }];
 
-// exports.companyLogin = [
-//     ...loginValidation,
-//     async (req, res) => {
-        
-        
-
-//         try {
-            
-//             req.session.companyId = company._id;
-//             req.session.companyName = company.companyName;
-
-//             req.session.save((err) => {
-//                 if (err) {
-//                     console.error('Session save error:', err);
-//                     return res.render('company-login', {
-//                         errors: [{ msg: 'Session error. Please try again.' }],
-//                         email
-//                     });
-//                 }
-//                 console.log(' Login successful for:', company.companyName);
-//                 res.redirect('/company-dashboard');
-//             });
-//         } catch (error) {
-            
-//         }
-//     }
-// ];
-
 exports.companyLogout = async(req, res) => {
     try{
           res.cookie("jwt","",{maxAge:0});
