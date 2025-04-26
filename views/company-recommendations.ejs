@@ -19,36 +19,37 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Montserrat', sans-serif; background: #fafafa; color: var(--text-color); line-height: 1.6; }
     header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--header-bg);
-  padding: 1rem 2rem;
-  box-shadow: var(--shadow);
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-.header-left, .header-center, .header-right {
-  display: flex;
-  align-items: center;
-}
-.header-left { gap: 1rem; }
-.header-center { gap: 1rem; margin-left: 1rem; }
-.header-right { gap: 1rem; }
-nav a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  transition: color var(--transition-speed), border-bottom var(--transition-speed);
-}
-nav a:hover {
-  color: var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
-}
-
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-left, .header-center, .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .header-left { gap: 1rem; }
+    .header-center { gap: 1rem; margin-left: 1rem; }
+    .header-right { gap: 1rem; }
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      transition: all var(--transition-speed);
+      border-radius: 4px;
+    }
+    nav a:hover {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+      background-color: rgba(255, 92, 92, 0.05);
+    }
     header .logo { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
     .dashboard-container { display: flex; min-height: calc(100vh - 70px); }
     .dashboard-sidebar {
@@ -91,6 +92,8 @@ nav a:hover {
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-top: 1rem;
+      opacity: 1;
+      transition: opacity var(--transition-speed);
     }
     .card {
       background: var(--bg-color);
@@ -106,7 +109,7 @@ nav a:hover {
     .card p {
       font-size: 0.9rem;
       margin-bottom: 1rem;
-      color: #555;
+      color: #666;
     }
     .card button, .profile-details button {
       padding: 0.5rem 1rem;
@@ -127,9 +130,10 @@ nav a:hover {
       margin-top: 1rem;
       background: var(--bg-color);
       padding: 1.5rem;
-     border-radius: 8px;
-    box-shadow: var(--shadow);
-      transition: all var(--transition-speed);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transition: opacity var(--transition-speed);
+      opacity: 0;
     }
     .profile-details h2 {
       margin-bottom: 1rem;
@@ -138,12 +142,15 @@ nav a:hover {
     .profile-details .info-item {
       margin-bottom: 0.5rem;
       padding: 0.5rem;
-  border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .profile-details .info-item:last-child {
+      border-bottom: none;
     }
     .profile-details .info-item label {
       font-weight: 600;
       margin-right: 0.5rem;
-       color: var(--primary-color);
+      color: var(--primary-color);
     }
     .profile-details .info-item a {
       color: var(--primary-color);
@@ -155,25 +162,28 @@ nav a:hover {
     .confirmation-message {
       display: none;
       margin-top: 1rem;
-      padding: 0.5rem;
+      padding: 1rem;
       background: rgba(255, 92, 92, 0.1);
       border-radius: 8px;
       color: var(--primary-color);
       font-weight: 600;
       text-align: center;
-     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-     transition: all var(--transition-speed);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: opacity var(--transition-speed);
+      opacity: 0;
     }
-    footer { text-align: center; 
+    footer { 
+      text-align: center; 
       padding: 1rem; 
       background: #f5f5f5; 
-      margin-top: 2rem; }
-      .hidden {
-         opacity: 0;
-         display: none;
-           transition: opacity var(--transition-speed);
-}
-    </style>
+      margin-top: 2rem; 
+    }
+    .hidden {
+      opacity: 0;
+      display: none;
+      transition: opacity var(--transition-speed);
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -189,7 +199,6 @@ nav a:hover {
       <a href="/company-settings">Settings</a>
       <a href="/company-profile">Profile</a>
       <a href="/api/auth/company-logout" style="padding: 0.5rem 0.75rem; background: #ff5c5c; color: white; border-radius: 4px; font-weight: bold;">Log Out</a>
-  
     </nav>
   </header>
   <div class="dashboard-container">
@@ -213,7 +222,12 @@ nav a:hover {
               <div class="card">
                 <h4><%= freelancer.name %></h4>
                 <p><%= freelancer.skills.join(", ") %></p>
-                <button onclick='viewProfile("<%= freelancer.name %>", "<%= freelancer.email %>", "<%= freelancer.industry %>", "<%= freelancer.experience %>", "<%= freelancer.resumelink %>")'>View Profile</button>  
+                <button data-name="<%= freelancer.name %>" 
+                        data-email="<%= freelancer.email %>" 
+                        data-industry="<%= freelancer.industry %>" 
+                        data-experience="<%= freelancer.experience %>" 
+                        data-resume="<%= freelancer.resumelink %>" 
+                        class="view-profile-btn">View Profile</button>  
               </div>
             <% }) %>
           </div>
@@ -226,8 +240,8 @@ nav a:hover {
           <div class="info-item"><label>Industry:</label><span id="profile-industry"></span></div>
           <div class="info-item"><label>Experience:</label><span id="profile-experience"></span></div>
           <div class="info-item"><label>Resume Link:</label><a id="profile-resume" href="#" target="_blank"></a></div>
-          <button onclick="selectFreelancer()">Select Freelancer</button>
-          <button onclick="closeProfile()">Close</button>
+          <button id="select-freelancer-btn">Select Freelancer</button>
+          <button id="close-profile-btn">Close</button>
           <div id="confirmation-message" class="confirmation-message"></div>
         </div>
       </div>
@@ -236,93 +250,145 @@ nav a:hover {
   <footer>
     © 2025 ServeHive. All rights reserved.
   </footer>
+  
   <script>
-    let selectedFreelancer = null;
-    let selectedEmail = null;
-
-    function viewProfile(name, description, email, industry, experience, resumeLink) {
+    document.addEventListener('DOMContentLoaded', function() {
+      let selectedFreelancer = null;
+      let selectedEmail = null;
+      
+      // Get references to DOM elements we'll use multiple times
       const cardGrid = document.querySelector('.card-grid');
-      cardGrid.style.opacity = '0';
-      
-      
-     setTimeout(() => {
-    cardGrid.style.display = 'none';
-      document.querySelector('.card-grid').style.display = 'none';
-      document.getElementById('profile-name').textContent = name;
-      document.getElementById('profile-email').textContent = email;
-      document.getElementById('profile-industry').textContent = industry;
-      document.getElementById('profile-experience').textContent = experience;
-      document.getElementById('profile-resume').href = resumeLink;
-      document.getElementById('profile-resume').textContent = resumeLink;
-      document.getElementById('profile-details').style.display = 'block';
-      document.getElementById('confirmation-message').style.display = 'none';
-      selectedFreelancer = name;
-      selectedEmail = email;
       const profileDetails = document.getElementById('profile-details');
-    profileDetails.style.display = 'block';
-    setTimeout(() => {
-      profileDetails.style.opacity = '1';
-        }, 50);
-    
-    document.getElementById('confirmation-message').style.display = 'none';
-    selectedFreelancer = name;
-    selectedEmail = email;
-  }, 300);
-}
-  
-    function selectFreelancer() {
-  if (selectedFreelancer && selectedEmail) {
-    const confirmationMessage = document.getElementById('confirmation-message');
-    confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
-    confirmationMessage.style.display = 'block';
-    confirmationMessage.style.opacity = '0';
-    setTimeout(() => {
-      confirmationMessage.style.opacity = '1';
-    }, 50);
-
-    sendEmailSimulation(selectedEmail, selectedFreelancer);
-  }
-}
-
-
-    function selectFreelancer(name, email) {
-  if (name && email) {
-    const confirmationMessage = document.getElementById('confirmation-message');
-    confirmationMessage.textContent = `${name} has been selected for your project!`;
-    confirmationMessage.style.display = 'block';
-
-    sendEmailSimulation(email, name);
-  }
-}
-
-    function sendEmailSimulation(email, freelancerName) {
-      // This is a simulation; in a real application, replace with an API call to a backend
-      alert(`Email sent to ${email} with the message:\n\nHello ${freelancerName},\nYou have been selected for a project on ServeHive. Please contact the company to proceed.\n\nBest,\nServeHive Team`);
-      console.log(`Simulated email sent to ${email} for ${freelancerName}`);
-    }
-
-   ]
-    function closeProfile() {
-  // Fade out profile details
-  const profileDetails = document.getElementById('profile-details');
-  profileDetails.style.opacity = '0';
-  
-  setTimeout(() => {
-    profileDetails.style.display = 'none';
-    document.getElementById('confirmation-message').style.display = 'none';
-    
-    // Show card grid
-    const cardGrid = document.querySelector('.card-grid');
-    cardGrid.style.display = 'grid';
-    setTimeout(() => {
-      cardGrid.style.opacity = '1';
-    }, 50);
-    
-    selectedFreelancer = null;
-    selectedEmail = null;
-  }, 300);
-}
-
+      const confirmationMessage = document.getElementById('confirmation-message');
+      
+      // Add event listeners to all profile buttons
+      const setupEventListeners = function() {
+        // Setup view profile buttons
+        document.querySelectorAll('.view-profile-btn').forEach(button => {
+          button.addEventListener('click', function() {
+            const name = this.getAttribute('data-name');
+            const email = this.getAttribute('data-email');
+            const industry = this.getAttribute('data-industry');
+            const experience = this.getAttribute('data-experience');
+            const resumeLink = this.getAttribute('data-resume');
+            
+            viewProfile(name, email, industry, experience, resumeLink);
+          });
+        });
+        
+        // Setup select freelancer button
+        document.getElementById('select-freelancer-btn').addEventListener('click', function() {
+          selectFreelancer();
+        });
+        
+        // Setup close profile button
+        document.getElementById('close-profile-btn').addEventListener('click', function() {
+          closeProfile();
+        });
+      };
+      
+      // Run setup after page loads
+      setupEventListeners();
+      
+      // Function to view a freelancer's profile
+      function viewProfile(name, email, industry, experience, resumeLink) {
+        console.log("Viewing profile for:", name);
+        
+        // Fade out card grid
+        if (cardGrid) {
+          cardGrid.style.opacity = '0';
+          
+          setTimeout(() => {
+            cardGrid.style.display = 'none';
+            
+            // Set profile details
+            document.getElementById('profile-name').textContent = name;
+            document.getElementById('profile-email').textContent = email;
+            document.getElementById('profile-industry').textContent = industry;
+            document.getElementById('profile-experience').textContent = experience;
+            
+            const resumeElem = document.getElementById('profile-resume');
+            if (resumeElem) {
+              resumeElem.href = resumeLink;
+              resumeElem.textContent = resumeLink;
+            }
+            
+            // Show profile details
+            if (profileDetails) {
+              profileDetails.style.display = 'block';
+              setTimeout(() => {
+                profileDetails.style.opacity = '1';
+              }, 50);
+            }
+            
+            if (confirmationMessage) {
+              confirmationMessage.style.display = 'none';
+              confirmationMessage.style.opacity = '0';
+            }
+            
+            selectedFreelancer = name;
+            selectedEmail = email;
+          }, 300);
+        }
+      }
+      
+      // Function to select a freelancer
+      function selectFreelancer() {
+        console.log("Selecting freelancer:", selectedFreelancer);
+        
+        if (selectedFreelancer && selectedEmail && confirmationMessage) {
+          confirmationMessage.textContent = `${selectedFreelancer} has been selected for your project!`;
+          confirmationMessage.style.display = 'block';
+          
+          // Add fade-in effect
+          setTimeout(() => {
+            confirmationMessage.style.opacity = '1';
+          }, 50);
+          
+          sendEmailSimulation(selectedEmail, selectedFreelancer);
+        }
+      }
+      
+      // Function to close the profile view
+      function closeProfile() {
+        console.log("Closing profile");
+        
+        // Fade out profile details
+        if (profileDetails) {
+          profileDetails.style.opacity = '0';
+          
+          setTimeout(() => {
+            profileDetails.style.display = 'none';
+            
+            if (confirmationMessage) {
+              confirmationMessage.style.display = 'none';
+              confirmationMessage.style.opacity = '0';
+            }
+            
+            // Show card grid
+            if (cardGrid) {
+              cardGrid.style.display = 'grid';
+              setTimeout(() => {
+                cardGrid.style.opacity = '1';
+              }, 50);
+            }
+            
+            selectedFreelancer = null;
+            selectedEmail = null;
+          }, 300);
+        }
+      }
+      
+      // Function to simulate sending an email
+      function sendEmailSimulation(email, freelancerName) {
+        console.log(`Simulated email sent to ${email} for ${freelancerName}`);
+        
+        // Using a less intrusive notification method would be better for production
+        setTimeout(() => {
+          alert(`Email sent to ${email} with the message:\n\nHello ${freelancerName},\nYou have been selected for a project on ServeHive. Please contact the company to proceed.\n\nBest,\nServeHive Team`);
+        }, 500);
+      }
+    });
   </script>
 </body>
 </html>
