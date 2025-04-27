@@ -2,7 +2,8 @@ const { body, validationResult } = require('express-validator');
 const Company = require('../models/companySchema');
 const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
-const Freelancer=require('../models/FreelancerSchema');
+const Freelancer=require('../models/FreelancerSchema')
+const Conversation = require('../models/conversationSchema');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -32,7 +33,6 @@ exports.renderCompanyDashboard = async (req, res) => {
         return res.redirect('/company-login');
     }
 };
-
 exports.renderCompanyProfile = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -130,32 +130,25 @@ exports.renderCompanySettings = async (req, res) => {
 
    
 };
+
 exports.renderCompanyCommunications = async (req, res) => {
-    try{
-        const token = req.cookies.jwt;
-
-        if (!token) {
-            console.log('No token found');
-            return res.redirect('/company-login');
-        }
-
-        const decoded = jwt.verify(token, JWT_SECRET); 
-        const companyId = decoded.id; 
-
-        const company = await Company.findById(companyId);
-
-        if (!company) {
-            console.log('Company not found');
-            return res.redirect('/company-login');
-        }
-         res.render('company-communications');
-    }
-    catch (error) {
-        console.error('Error verifying JWT or rendering dashboard:', error.message);
-        return res.redirect('/company-login');
-    }
+    try {
+        const token = req.cookies.jwt || '';
+        const loggedUserId = req.user._id;
+        console.log("logged user:", req.user._id);
+        const allFreelancers = await Freelancer.find({});
+        console.log(allFreelancers);
+        res.render('company-communications', {
+          allFreelancers,
+          user: req.user, // Pass user for client-side checks
+          csrfToken: req.csrfToken(), // Pass CSRF token for POST requests
+          token
+        });
+      } catch (error) {
+        console.error('Error rendering company communications:', error);
+        res.status(500).send('Server error');
+      }
 };
-
 exports.renderCompanyReviews = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -181,7 +174,9 @@ exports.renderCompanyReviews = async (req, res) => {
         console.error('Error verifying JWT or rendering dashboard:', error.message);
         return res.redirect('/company-login');
     }
-}   
+    
+};
+
 exports.renderCompanyPayments = async(req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -208,6 +203,7 @@ exports.renderCompanyPayments = async(req, res) => {
     }
    
 };
+
 exports.renderCompanyTaskManagement = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -261,6 +257,7 @@ exports.renderCompanyNotifications =async (req, res) => {
     }
     
 };
+
 exports.renderCompanySupport = async(req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -286,3 +283,5 @@ exports.renderCompanySupport = async(req, res) => {
         return res.redirect('/company-login');
     }
 };
+// At the end of companyController.js
+console.log('Exported companyController functions:', Object.keys(module.exports));
