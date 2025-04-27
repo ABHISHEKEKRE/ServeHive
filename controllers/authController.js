@@ -1,214 +1,78 @@
-const { body, validationResult } = require('express-validator');
 const Company = require('../models/companySchema');
+const Project = require('../models/projectSchema');
+const Bid = require('../models/bidSchema');
 const Freelancer=require('../models/FreelancerSchema');
-const  generateTokenSetCookie = require('../utils/generateToken');
 const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
+exports.placeBid = async (req, res) => {
+    const projectId = req.query.project;
+    console.log(projectId);
+    const project = await Project.findById(projectId);
 
-const companysignupValidation = [
-    body('companyName')
-        .trim()
-        .isLength({ min: 2, max: 50 }).withMessage('Company name must be 2-50 characters long')
-        .matches(/^[a-zA-Z0-9 &-]+$/).withMessage('Company name can only contain letters, numbers, spaces, &, and -'),
-    body('email')
-        .trim()
-        .isEmail().withMessage('Invalid email address')
-        .normalizeEmail(),
-    body('password')
-        .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-        .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-        .withMessage('Password must include uppercase, lowercase, number, and special character'),
-    body('phone')
-        .optional({ checkFalsy: true })
-        .isMobilePhone().withMessage('Invalid phone number')
-];
+    if (!project) {
+        return res.status(404).send('Project not found');
+    }
+    try{
+        const token = req.cookies.jwt;
 
-const loginValidation = [
-    body('email').trim().isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('password').not().isEmpty().withMessage('Password is required')
-];
-exports.companySignup = [
-    ...companysignupValidation,
-    async (req, res) => {
-
-        try {
-            console.log('signup page post');
-            const { companyName, email, password,confirmPassword } = req.body;
-            
-            const existingCompany = await Company.findOne({ email });
-            if (existingCompany) {
-                console.log('Company already exists');
-                return res.render('company-login', { errors: [{ msg: 'Company with this email already exists!' }] });
-            }
-             
-            if(password!==confirmPassword){
-                console.log('Passwords dont match ');
-                return res.render('company-login', { errors: [{ msg: 'Password and Confirm Password are not the same' }] });
-            }
-            
-            
-            const newCompany = new Company({
-                companyName,
-                email,
-                password
-            });
-            generateTokenSetCookie(newCompany._id,res, 'company');
-            await newCompany.save();
-            console.log('company saved', companyName);
-            res.render('company-login', { errors: [{ msg: 'Signup Successful' }] });
-     
-        } catch (error) {
-            console.error(' Signup Error:', error);
-            res.render('company-login', { errors: [{ msg: 'Server error during signup' }] });
+        if (!token) {
+            console.log('No token found');
+            return res.redirect('/freelancer-login');
         }
-    }
-];
-exports.companyLogin =[
-    ...loginValidation,
-async (req, res) => {
-    try{
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.render('company-login', {
-                errors: errors.array(),
-                email: req.body.email
-            });
-        }
-        const { email, password } = req.body;
-            console.log('Login attempt for:', email);
 
-            const company = await Company.findOne({ email }).select('+password');
-            if (!company) {
-                console.log('Company not found!');
-                return res.render('company-login', {
-                  errors: [{ msg: 'Invalid email or password!' }],
-                  email,
-                  csrfToken: res.locals.csrfToken
-                });
-              }
+        const decoded = jwt.verify(token, JWT_SECRET); 
+        const freelancerId = decoded.id; 
 
-            const isMatch = await company.validatePassword(password);
-            console.log('Password Match:', isMatch);
+        const freelancer = await Freelancer.findById(freelancerId);
 
-            if (!isMatch) {
-                return res.render('company-login', {
-                    errors: [{ msg: 'Invalid email or password!' }],
-                    email
-                });
-            }
-            generateTokenSetCookie(company._id,res, 'company');
-            
-            res.redirect('/company-dashboard');
-    }
-    catch(error){
-        console.error(' Login Error:', error.message, error.stack);
-        res.render('company-login', {
-            errors: [{ msg: 'Server error during login' }],
-            email
-        });
-    }
-}];
-
-exports.companyLogout = async(req, res) => {
-    try{
-          res.cookie("jwt","",{maxAge:0});
-          console.log("Logout successfull");
-          res.redirect('/');
-    }
-    catch{
-          console.log("Error in company logout Controller",error.message);
-          res.status(500).json({error:"Internal Server Error"});
-    }
-};
-
-
-exports.freelancerLogout = (req, res) => {
-    try{
-        res.cookie("jwt","",{maxAge:0});
-        console.log("Logout successfull");
-        res.redirect('/');
-  }
-  catch{
-        console.log("Error in freelancer logout Controller",error.message);
-        res.status(500).json({error:"Internal Server Error"});
-  }
-};
-
-
-exports.freelancerLogin = async (req, res) => {
-    try {
-        const { freelancerEmail, freelancerPassword } = req.body;
-        const email = freelancerEmail;
-        const password = freelancerPassword;
-
-        const freelancer = await Freelancer.findOne({ email }).select('+password');
-       
         if (!freelancer) {
-            console.log('Freelancer not found!');
-            return res.render('freelancer-login', {
-                errors: [{ msg: 'Invalid email or password!' }],
-                email,
-                csrfToken: res.locals.csrfToken
-            });
-          }
-
-        const isMatch = await freelancer.validatePassword(password);
-        console.log('🔹 Password Match:', isMatch);
-
-        if (!isMatch) {
-            return res.render('freelancer-login', {
-                errors: [{ msg: 'Invalid email or password!' }],
-                email
-            });
+            console.log('Freelancer not found');
+            return res.redirect('/freelancer-login');
         }
-        generateTokenSetCookie(freelancer._id,res,'freelancer');
         
-        res.redirect('/freelancer-dashboard');
-       
-    } catch (error) {
-        console.error('freelancer login post error', error);
-        res.render('freelancer-login', {
-            errors: [{ msg: 'Server error during login' }],
-            email: req.body.freelancerEmail
-        });
+       res.render('bid', { project, freelancer });
     }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
+   
+
 };
 
-
-exports.freelancerSignup = async (req, res) => {
+exports.submitBid = async (req, res) => {
     try {
-        console.log('signup page post');
-        const { freelancerName, freelancerEmail, freelancerPassword,confirmPassword } = req.body;
-        const email = freelancerEmail;
-        if (!freelancerName || !freelancerEmail || !freelancerPassword || !confirmPassword) {
-            console.log('Missing required fields');
-            console.log(freelancerName);
-            console.log(freelancerEmail);
-            console.log(freelancerPassword);
-            consolele.log(confirmPassword);
-            return res.render('freelancer-login', { errors: [{ msg: 'All fields are required' }] });
-        }
+        console.log('Request body:', req.body);
 
-        const existingFreelancer = await Freelancer.findOne({ email });
-        if (existingFreelancer) {
-            console.log('Freelancer already exists');
-            return res.render('freelancer-login', { errors: [{ msg: 'Freelancer/Startup with this email already exists!' }] });
+        const { projectId, freelancerId, bidAmount, proposal } = req.body;
+
+        if (!projectId || !freelancerId || !bidAmount || !proposal) {
+            return res.status(400).json({ error: 'Missing required fields' });
         }
-        if(freelancerPassword!==confirmPassword){
-            console.log('Passwords dont match ');
-            return res.render('company-login', { errors: [{ msg: 'Password and Confirm Password are not the same' }] });
-        }
-        
-        const newFreelancer = new Freelancer({
-            name: freelancerName,
-            email: freelancerEmail,
-            password: freelancerPassword
+        console.log("FREELANCER ID:" ,freelancerId);
+        const project = await Project.findById(projectId);
+        const freelancer = await Freelancer.findById(freelancerId);
+        console.log(freelancer);
+        if (!project || !freelancer) {
+            return res.status(404).json({ error: 'Project or Freelancer not found' });
+        } 
+
+        const newBid = new Bid({
+            project: projectId,
+            freelancer: freelancerId,
+            bidAmount,
+            coverLetter: proposal,
+            status: 'Pending'
         });
-        generateTokenSetCookie(newFreelancer._id,res,'freelancer');
-        await newFreelancer.save();
-        console.log('Freelancer saved', freelancerName);
-        res.render('freelancer-login', { errors: [{ msg: 'Signup Successful' }] });
+
+        await newBid.save();
+
+        freelancer.bids.push(newBid._id);
+        await freelancer.save();
+        console.log('Bid submitted successfully', newBid);
+        res.redirect('/freelancer-bidding');
     } catch (error) {
-        console.error('Signup Error:', error);
-        res.render('freelancer-login', { errors: [{ msg: 'Server error during signup' }] });
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
     }
 };
