@@ -3,6 +3,7 @@ const Project = require('../models/projectSchema');
 const Bid = require('../models/bidSchema');
 const Freelancer=require('../models/FreelancerSchema');
 const jwt = require('jsonwebtoken');
+const Conversation = require('../models/conversationSchema');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 
@@ -77,35 +78,24 @@ exports.renderFreelancerBidding = async (req, res) => {
     }
  
 };
-
 exports.renderFreelancerCommunications = async (req, res) => {
-    try{
-        const token = req.cookies.jwt;
-
-        if (!token) {
-            console.log('No token found');
-            return res.redirect('/freelancer-login');
+    try {
+          const token = req.cookies.jwt || '';
+          const loggedUserId = req.user._id;
+          console.log("logged user:", req.user._id);
+          const allCompanies = await Company.find({});
+          console.log(allCompanies);
+          res.render('freelancer-communications', {
+            allCompanies,
+            user: req.user, // Pass user for client-side checks
+            csrfToken: req.csrfToken(), // Pass CSRF token for POST requests
+            token
+          });
+        } catch (error) {
+          console.error('Error rendering freelance communications:', error);
+          res.status(500).send('Server error');
         }
-
-        const decoded = jwt.verify(token, JWT_SECRET); 
-        const freelancerId = decoded.id; 
-
-        const freelancer = await Freelancer.findById(freelancerId);
-
-        if (!freelancer) {
-            console.log('Freelancer not found');
-            return res.redirect('/freelancer-login');
-        }
-        
-        res.render('freelancer-communications');
-    }
-    catch (error) {
-        console.error('Error verifying JWT or rendering dashboard:', error.message);
-        return res.redirect('/freelancer-login');
-    }
-    
 };
-
 exports.renderFreelancerReviews = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -162,7 +152,6 @@ exports.renderFreelancerTaskManagement = async (req, res) => {
     }
 };
 
-
 exports.renderFreelancerPayments = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -215,7 +204,6 @@ exports.renderFreelancerNotifications = async(req, res) => {
     }
 };
 
-
 exports.renderFreelancerHelp = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -242,6 +230,7 @@ exports.renderFreelancerHelp = async (req, res) => {
     }
     
 };
+
 exports.renderFreelancerSettings = async (req, res) => {
     try{
         const token = req.cookies.jwt;
@@ -267,6 +256,7 @@ exports.renderFreelancerSettings = async (req, res) => {
         return res.redirect('/freelancer-login');
     }
 };
+
 exports.renderFreelancerProfile = async (req, res) => {
     try{
         const token = req.cookies.jwt;
