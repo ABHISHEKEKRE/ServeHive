@@ -78,12 +78,13 @@ async (req, res) => {
 
             const company = await Company.findOne({ email }).select('+password');
             if (!company) {
-                console.log(' Company not found!');
+                console.log('Company not found!');
                 return res.render('company-login', {
-                    errors: [{ msg: 'Invalid email or password!' }],
-                    email
+                  errors: [{ msg: 'Invalid email or password!' }],
+                  email,
+                  csrfToken: res.locals.csrfToken
                 });
-            }
+              }
 
             const isMatch = await company.validatePassword(password);
             console.log('Password Match:', isMatch);
@@ -140,13 +141,15 @@ exports.freelancerLogin = async (req, res) => {
         const password = freelancerPassword;
 
         const freelancer = await Freelancer.findOne({ email }).select('+password');
+       
         if (!freelancer) {
             console.log('Freelancer not found!');
             return res.render('freelancer-login', {
                 errors: [{ msg: 'Invalid email or password!' }],
-                email
+                email,
+                csrfToken: res.locals.csrfToken
             });
-        }
+          }
 
         const isMatch = await freelancer.validatePassword(password);
         console.log('🔹 Password Match:', isMatch);
