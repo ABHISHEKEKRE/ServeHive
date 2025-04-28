@@ -1,29 +1,29 @@
-const mongoose=rtequire('mongoose');
+const mongoose=require('mongoose');
 
-const mongooseSchema=new mongoose.Schema({
+const messageSchema=new mongoose.Schema({
     senderId:{
         type:mongoose.Schema.Types.ObjectId,
         refPath:'senderModel',
         required: true
     },
-    recieverId:{
+    receiverId:{
         type:mongoose.Schema.Types.ObjectId,
-        refPath:'recieverModel',
+        refPath:'receiverModel',
         required:true
     },
     senderModel:{
         type:String,
         required:true,
-        enum:['Company','Freelanccer']
+        enum:['Company','Freelancer']
     },
-    recieverModel:{
+    receiverModel:{
         type:String,
         required:true,
-        enum:['Company','Freelanccer']
+        enum:['Company','Freelancer']
     },
     message:{
-        typr:String,
+        type:String,
         required:true
     }
-},{timestamp:true});
+},{timestamps:true});
 module.exports =mongoose.model("Message",messageSchema);
