@@ -288,7 +288,7 @@
     window.location.href = '/company-login';
   }
 
-  const socket = io('http://localhost:4000', {
+  const socket = io('https://servehive.onrender.com', {
     auth: { token },
     transports: ['websocket', 'polling']
   });
