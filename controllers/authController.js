@@ -184,7 +184,7 @@ exports.freelancerSignup = async (req, res) => {
             console.log(freelancerName);
             console.log(freelancerEmail);
             console.log(freelancerPassword);
-            consolele.log(confirmPassword);
+            console.log(confirmPassword);
             return res.render('freelancer-login', { errors: [{ msg: 'All fields are required' }] });
         }
 
