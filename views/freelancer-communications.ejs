@@ -26,36 +26,35 @@
       line-height: 1.6;
     }
     header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--header-bg);
-  padding: 1rem 2rem;
-  box-shadow: var(--shadow);
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-.header-left, .header-center, .header-right {
-  display: flex;
-  align-items: center;
-}
-.header-left { gap: 1rem; }
-.header-center { gap: 1rem; margin-left: 1rem; }
-.header-right { gap: 1rem; }
-nav a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  transition: color var(--transition-speed), border-bottom var(--transition-speed);
-}
-nav a:hover {
-  color: var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
-}
-
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .header-left, .header-center, .header-right {
+      display: flex;
+      align-items: center;
+    }
+    .header-left { gap: 1rem; }
+    .header-center { gap: 1rem; margin-left: 1rem; }
+    .header-right { gap: 1rem; }
+    nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      transition: color var(--transition-speed), border-bottom var(--transition-speed);
+    }
+    nav a:hover {
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--primary-color);
+    }
     header .logo {
       font-size: 1.8rem;
       font-weight: 700;
@@ -71,8 +70,12 @@ nav a:hover {
       border-right: 1px solid #eee;
       padding: 1.5rem 1rem;
     }
-    .dashboard-sidebar ul { list-style: none; }
-    .dashboard-sidebar ul li { margin-bottom: 1rem; }
+    .dashboard-sidebar ul {
+      list-style: none;
+    }
+    .dashboard-sidebar ul li {
+      margin-bottom: 1rem;
+    }
     .dashboard-sidebar ul li a {
       text-decoration: none;
       color: var(--text-color);
@@ -87,22 +90,77 @@ nav a:hover {
       background-color: rgba(255,92,92,0.1);
       color: var(--primary-color);
     }
-    .dashboard-main { flex: 1; padding: 2rem; }
-    .page-title {
-      color: var(--primary-color);
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
+    .dashboard-main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      gap: 2rem;
     }
     .dashboard-section {
       background: var(--bg-color);
       padding: 1.5rem;
       border-radius: 8px;
       box-shadow: var(--shadow);
-      max-width: 800px;
-      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
-    /* Chat Styles */
+    /* Chat List Styles */
+    .chat-list {
+      width: 300px;
+      background: var(--bg-color);
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 1rem;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .chat-list h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    .chat-list ul {
+      list-style: none;
+    }
+    .chat-list ul li {
+      padding: 0.75rem;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background var(--transition-speed);
+    }
+    .chat-list ul li:hover {
+      background: rgba(255,92,92,0.1);
+    }
+    .chat-list ul li.active {
+      background: rgba(255,92,92,0.2);
+      font-weight: 600;
+    }
+    .chat-list .chat-contact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-list .chat-contact .contact-info {
+      flex: 1;
+    }
+    .chat-list .chat-contact .contact-name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .chat-list .chat-contact .message-preview {
+      font-size: 0.9rem;
+      color: #666;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
+    }
+    .chat-list .chat-contact .timestamp {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    /* Chat Window Styles */
     .chat-container {
       border: 1px solid #eee;
       border-radius: 8px;
@@ -110,27 +168,25 @@ nav a:hover {
       max-height: 400px;
       overflow-y: auto;
       margin-bottom: 1rem;
+      flex: 1;
     }
     .message {
       margin-bottom: 1rem;
       display: flex;
       flex-direction: column;
     }
-    .message.received .text {
+    .message.sent {
+      align-items: flex-end;
+    }
+    .message .text {
       background: #f2f2f2;
       padding: 0.75rem 1rem;
       border-radius: 20px;
       max-width: 70%;
     }
-    .message.sent {
-      align-items: flex-end;
-    }
     .message.sent .text {
       background: var(--primary-color);
       color: #fff;
-      padding: 0.75rem 1rem;
-      border-radius: 20px;
-      max-width: 70%;
     }
     .chat-input {
       display: flex;
@@ -153,7 +209,9 @@ nav a:hover {
       cursor: pointer;
       transition: background var(--transition-speed);
     }
-    .chat-input button:hover { background: var(--secondary-color); }
+    .chat-input button:hover {
+      background: var(--secondary-color);
+    }
     footer {
       text-align: center;
       padding: 1rem;
@@ -192,30 +250,278 @@ nav a:hover {
     </aside>
     
     <main class="dashboard-main">
-      <h1 class="page-title">Communications</h1>
-      <div class="dashboard-section">
-        <div class="chat-container">
-          <!-- Example Chat Messages -->
-          <div class="message received">
-            <div class="text"><strong>Company:</strong> Hello, we are interested in your proposal. Can you share more details?</div>
-          </div>
-          <div class="message sent">
-            <div class="text"><strong>You:</strong> Sure, I have 6 years of experience in this field. Let's discuss further.</div>
-          </div>
-          <div class="message received">
-            <div class="text"><strong>Company:</strong> Great! Let's schedule a call tomorrow.</div>
-          </div>
-        </div>
-        <div class="chat-input">
-          <input type="text" placeholder="Type your message here..." />
-          <button type="button">Send</button>
-        </div>
+      <!-- Chat List Section -->
+      <div class="chat-list">
+        <h3>Chats</h3>
+        <ul id="chatList">
+            <% allCompanies.forEach(company => { %>
+                <li data-chat-id="<%= company._id %>">
+                    <div class="chat-contact">
+                        <div class="contact-info">
+                            <div class="contact-name"><%= company.companyName %></div>
+                            <div class="message-preview"><%= company.messagePreview || 'No new messages' %></div>
+                        </div>
+                        <div class="timestamp"><%= company.lastMessageTimestamp || 'N/A' %></div>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+      <!-- Chat Window Section (Initially Empty) -->
+      <div class="dashboard-section" id="chatWindow">
+        <!-- Chat messages and input will be dynamically added here -->
       </div>
     </main>
   </div>
-  
   <footer>
     © 2025 ServeHive. All rights reserved.
   </footer>
+  <script src="/socket.io/socket.io.js"></script>
+
+
+<script>
+  const token = '<%= token %>';
+  console.log('JWT Token for Socket.IO:', token);
+  if (!token) {
+    console.error('No JWT token found, redirecting to login');
+    window.location.href = '/freelancer-login';
+  }
+
+  const socket = io('http://localhost:4000', {
+    auth: { token },
+    transports: ['websocket', 'polling']
+  });
+
+  socket.on('connect', () => {
+    console.log('Socket.IO connected successfully');
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error('Socket.IO connection error:', error.message);
+    if (error.message.includes('Authentication error')) {
+      console.warn('Authentication failed, redirecting to login');
+      window.location.href = '/company-login';
+    } else {
+      alert('Failed to connect to chat: ' + error.message);
+    }
+  });
+
+  const currentUserId = '<%= user._id %>';
+  let currentChatId = null;
+
+  async function renderChat(companyId) {
+    console.log('renderChat called with:', { companyId, currentUserId });
+    if (!companyId) {
+      console.error('No companyId provided');
+      alert('Please select a valid user to chat with');
+      return;
+    }
+
+    try {
+      currentChatId = companyId;
+
+      // Validate companyId format (24-character hex string for MongoDB ObjectId)
+      const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(companyId);
+      if (!isValidObjectId) {
+        console.error('Invalid companyId format:', companyId);
+        alert('Invalid user ID selected');
+        return;
+      }
+
+      console.log('Fetching messages for:', { companyId, currentUserId });
+      const response = await fetch(`/api/messages/${companyId}`, {
+        method: 'GET',
+        headers: {
+          'X-CSRF-Token': '<%= csrfToken %>',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+      console.log('API response for messages:', { status: response.status, data });
+
+      if (response.status === 401 || response.status === 403) {
+        console.warn('Unauthorized access, redirecting to login');
+        window.location.href = '/company-login';
+        return;
+      }
+
+      if (!response.ok) {
+        console.error('API request failed:', { status: response.status, statusText: response.statusText, data });
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      const chatWindow = document.getElementById('chatWindow');
+      if (!chatWindow) {
+        console.error('chatWindow element not found');
+        alert('Chat window not found, please check the page structure');
+        return;
+      }
+
+      chatWindow.innerHTML = '';
+
+      const chatContainer = document.createElement('div');
+      chatContainer.classList.add('chat-container');
+
+      // Handle both { messages: [...] } and { error: [...] } for compatibility
+      const messages = data.messages || data.error || [];
+      if (!Array.isArray(messages) || messages.length === 0) {
+        console.log('No messages found for:', { companyId, currentUserId });
+        chatContainer.innerHTML = '<p>No messages yet.</p>';
+      } else {
+        console.log('Rendering messages:', messages);
+        messages.forEach((message, index) => {
+          if (!message.senderId || !message.message) {
+            console.warn(`Invalid message data at index ${index}:`, message);
+            return;
+          }
+          const messageDiv = document.createElement('div');
+          const isSent = message.senderId.toString() === currentUserId;
+          messageDiv.classList.add('message', isSent ? 'sent' : 'received');
+          messageDiv.innerHTML = `
+            <div class="text">
+              <strong>${isSent ? 'You' : message.senderModel === 'Freelancer' ? 'Freelancer' : 'Company'}:</strong>
+              ${message.message}
+            </div>
+            <div class="timestamp">${new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+          `;
+          chatContainer.appendChild(messageDiv);
+        });
+      }
+
+      const chatInput = document.createElement('div');
+      chatInput.classList.add('chat-input');
+      chatInput.innerHTML = `
+        <input type="text" placeholder="Type your message here..." />
+        <button type="button">Send</button>
+      `;
+
+      chatWindow.appendChild(chatContainer);
+      chatWindow.appendChild(chatInput);
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      console.log('Chat window updated for:', companyId);
+
+      const input = chatInput.querySelector('input');
+      const sendButton = chatInput.querySelector('button');
+      sendButton.addEventListener('click', () => {
+        const messageText = input.value.trim();
+        if (!messageText) {
+          console.log('Empty message, ignoring');
+          return;
+        }
+        console.log('Sending message:', { receiverId: companyId, message: messageText });
+
+        socket.emit('sendMessage', {
+          receiverId: companyId,
+          message: messageText
+        }, (response) => {
+          if (response && response.error) {
+            console.error('Send message error:', response.error);
+            alert('Failed to send message: ' + response.error);
+          } else {
+            console.log('Message sent successfully');
+            // Refresh messages to include the new message
+            renderChat(companyId);
+          }
+        });
+        input.value = '';
+      });
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendButton.click();
+        }
+      });
+
+      document.querySelectorAll('.chat-list ul li').forEach(li => li.classList.remove('active'));
+      const activeChat = document.querySelector(`.chat-list ul li[data-chat-id="${companyId}"]`);
+      if (activeChat) {
+        activeChat.classList.add('active');
+        console.log('Highlighted chat:', companyId);
+      } else {
+        console.warn('Chat list item not found for:', companyId);
+      }
+    } catch (error) {
+      console.error('Error in renderChat:', error);
+      alert('Failed to load messages: ' + error.message);
+    }
+  }
+
+  socket.on('newMessage', (message) => {
+    console.log('New message received:', message);
+    const isRelevantChat =
+      (message.senderId.toString() === currentChatId && message.receiverId.toString() === currentUserId) ||
+      (message.senderId.toString() === currentUserId && message.receiverId.toString() === currentChatId);
+
+    if (isRelevantChat && currentChatId) {
+      const chatContainer = document.querySelector('.chat-container');
+      if (!chatContainer) {
+        console.error('chatContainer not found for new message');
+        return;
+      }
+      if (chatContainer.innerHTML.includes('No messages yet')) {
+        chatContainer.innerHTML = '';
+      }
+      const messageDiv = document.createElement('div');
+      const isSent = message.senderId.toString() === currentUserId;
+      messageDiv.classList.add('message', isSent ? 'sent' : 'received');
+      messageDiv.innerHTML = `
+        <div class="text">
+          <strong>${isSent ? 'You' : message.senderModel === 'Freelancer' ? 'Freelancer' : 'Company'}:</strong>
+          ${message.message}
+        </div>
+        <div class="timestamp">${new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+      `;
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      console.log('New message rendered for:', currentChatId);
+    }
+
+    const chatId = message.senderId.toString() === currentUserId ? message.receiverId : message.senderId;
+    const chatItem = document.querySelector(`.chat-list ul li[data-chat-id="${chatId}"]`);
+    if (chatItem) {
+      chatItem.querySelector('.message-preview').textContent = message.message;
+      chatItem.querySelector('.timestamp').textContent = new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      console.log('Updated chat preview for:', chatId);
+    } else {
+      console.warn('Chat item not found for preview update:', chatId);
+    }
+  });
+
+  socket.on('messageError', (data) => {
+    console.error('Message error:', data.error);
+    alert('Failed to send message: ' + data.error);
+  });
+
+  socket.on('onlineUsers', (users) => {
+    console.log('Online users:', users);
+    document.querySelectorAll('.chat-list ul li').forEach(item => {
+      const companyId = item.getAttribute('data-chat-id');
+      const contactInfo = item.querySelector('.contact-info');
+      if (!contactInfo) {
+        console.warn('contact-info not found for:', companyId);
+        return;
+      }
+      const status = users.includes(companyId) ? '🟢 Online' : '⚪ Offline';
+      let statusElement = contactInfo.querySelector('.status');
+      if (!statusElement) {
+        statusElement = document.createElement('span');
+        statusElement.className = 'status';
+        contactInfo.appendChild(statusElement);
+      }
+      statusElement.textContent = status;
+    });
+  });
+
+  document.querySelectorAll('.chat-list ul li').forEach(item => {
+    item.addEventListener('click', () => {
+      const companyId = item.getAttribute('data-chat-id');
+      console.log('Chat list item clicked:', { companyId });
+      renderChat(companyId);
+    });
+  });
+</script>
 </body>
 </html>
