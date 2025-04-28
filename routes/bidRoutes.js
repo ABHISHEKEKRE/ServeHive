@@ -5,6 +5,6 @@ const protectRoutes = require('../middleware/protectRoutes');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 router.get('/place-bid' ,protectRoutes, bidController.placeBid);
-router.post('/submit-bid', protectRoutes,  csrfProtection, bidController.submitBid);
+router.post('/submit-bid', protectRoutes, bidController.submitBid);
 
 module.exports = router;
