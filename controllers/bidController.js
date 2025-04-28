@@ -39,8 +39,8 @@ exports.placeBid = async (req, res) => {
 };
 
 exports.submitBid = async (req, res) => {
-    try {
-        try{
+      try {
+          try{
         const token = req.cookies.jwt;
 
         if (!token) {
@@ -49,24 +49,24 @@ exports.submitBid = async (req, res) => {
         }
 
         const decoded = jwt.verify(token, JWT_SECRET); 
-        const freelancerId = decoded.id; 
+        const freelancerrId = decoded.id; 
 
-        const freelancer = await Freelancer.findById(freelancerId);
+        const freelancerr = await Freelancer.findById(freelancerrId);
 
-        if (!freelancer) {
+        if (!freelancerr) {
             console.log('Freelancer not found');
             return res.redirect('/freelancer-login');
         }
-         console.log('Request body:', req.body);
+        console.log('Request body:', req.body);
 
         const { projectId, freelancerId, bidAmount, proposal } = req.body;
 
         if (!projectId || !freelancerId || !bidAmount || !proposal) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
-
         console.log("FREELANCER ID:" ,freelancerId);
         const project = await Project.findById(projectId);
+        const freelancer = await Freelancer.findById(freelancerId);
         console.log(freelancer);
         if (!project || !freelancer) {
             return res.status(404).json({ error: 'Project or Freelancer not found' });
@@ -86,12 +86,6 @@ exports.submitBid = async (req, res) => {
         await freelancer.save();
         console.log('Bid submitted successfully', newBid);
         res.redirect('/freelancer-bidding');
-    }
-    catch (error) {
-        console.error('Error verifying JWT or rendering dashboard:', error.message);
-        return res.redirect('/freelancer-login');
-    }
-       
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server Error' });
