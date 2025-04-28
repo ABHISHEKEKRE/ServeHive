@@ -57,6 +57,11 @@ exports.submitBid = async (req, res) => {
             console.log('Freelancer not found');
             return res.redirect('/freelancer-login');
         }
+    }
+    catch (error) {
+        console.error('Error verifying JWT or rendering dashboard:', error.message);
+        return res.redirect('/freelancer-login');
+    }
         console.log('Request body:', req.body);
 
         const { projectId, freelancerId, bidAmount, proposal } = req.body;
