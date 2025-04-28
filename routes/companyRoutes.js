@@ -6,6 +6,7 @@ const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 
 router.get('/', (req, res) => res.render('main-landing'));
+router.get('/about-us', (req, res) => res.render('about-us'));
 router.get('/company-login', (req, res) => res.render('company-login', { errors: [] }));
 router.get('/company-dashboard', protectRoutes, companyController.renderCompanyDashboard);
 router.get('/company-profile', protectRoutes, companyController.renderCompanyProfile);
