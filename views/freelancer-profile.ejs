@@ -187,6 +187,7 @@
       </div>
   
       <form id="profileForm" method="POST" action="/freelancer-profile-submit" >
+         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <section>
           <h2>Basic Information</h2>
          <p><strong>Your Name: </strong><%= freelancer.name %> <span class="view-mode"></span>
