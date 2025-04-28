@@ -212,6 +212,7 @@
       <div class="dashboard-section">
         <h2>Project Details</h2>
         <form method="POST" action="/company-post-project">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="form-group">
             <label for="project-title">Project Title</label>
             <input type="text" id="project-title" placeholder="Enter project title" name="projectTitle" required>
