@@ -74,6 +74,7 @@
       <p><strong>Description:</strong> <%= project.description %></p>
     </div>
     <form action="/submit-bid" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <input type="hidden" name="projectId" value="<%= project._id %>">
         <input type="hidden" name="freelancerId" value="<%= freelancer._id %>"> 
       
